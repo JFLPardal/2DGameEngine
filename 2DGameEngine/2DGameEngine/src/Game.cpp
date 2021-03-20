@@ -70,25 +70,30 @@ void Game::ProcessInput()
     }
 }
 
-glm::vec2 playerPosition;
-glm::vec2 playerVelocity;
 
 void Game::Setup()
 {
     playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(1.0, 0.0);
+    playerVelocity = glm::vec2(10.0, 200.0);
 }
 
 void Game::Update()
 {
-    // notice the ; at the end of the line -
-    // this will block processing of the function until the previous frame took millisecs_per_frame
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_millisecondsPreviousFrame + CONST::MILLISECS_PER_FRAME));
-    
+    // frame management
+    if (CONST::FRAMERATE::IS_CAPPED)
+    {
+        int millisecondsToWait = CONST::FRAMERATE::MILLISECS_PER_FRAME - (SDL_GetTicks() - m_millisecondsPreviousFrame);
+        if (millisecondsToWait > 0 && millisecondsToWait <= CONST::FRAMERATE::MILLISECS_PER_FRAME)
+        {
+            SDL_Delay(millisecondsToWait);
+        }
+    }
+
+    double deltaTime = (SDL_GetTicks() - m_millisecondsPreviousFrame) / 1000.0;
     m_millisecondsPreviousFrame = SDL_GetTicks();
 
-    playerPosition.x += playerVelocity.x;
-    playerPosition.y += playerVelocity.y;
+    playerPosition.x += playerVelocity.x * deltaTime;
+    playerPosition.y += playerVelocity.y * deltaTime;
 }
 
 void Game::Run()

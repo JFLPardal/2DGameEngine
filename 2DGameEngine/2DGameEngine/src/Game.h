@@ -1,10 +1,14 @@
 #pragma once
-
+#include "glm/glm.hpp"
 // constants
 namespace CONST
 {
-	constexpr int FPS = 60;
-	constexpr int MILLISECS_PER_FRAME = 1000 / CONST::FPS;
+	namespace FRAMERATE
+	{
+		constexpr bool IS_CAPPED = true;
+		constexpr int FPS = 120;
+		constexpr int MILLISECS_PER_FRAME = 1000 / CONST::FRAMERATE::FPS;
+	}
 }
 
 class SDL_Window;
@@ -32,6 +36,8 @@ private:
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
 
+	glm::vec2 playerPosition;
+	glm::vec2 playerVelocity;
 	bool m_IsRunning = false; 
 	int m_millisecondsPreviousFrame = 0;
 };
