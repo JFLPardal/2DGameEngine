@@ -1,14 +1,15 @@
 #include "Game.h"
 
-#include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glm/glm.hpp>
 
+#include "Logger.h"
+
 Game::Game()
     :m_IsRunning(false)
 {
-    std::cout << "game created" << std::endl;
+    Logger::Log("game created");
 }
 
 void Game::Initialize()
@@ -17,7 +18,7 @@ void Game::Initialize()
     bool errorInitializingSDL = SDL_Init(SDL_INIT_EVERYTHING) != 0;
     if (errorInitializingSDL)
     {
-        std::cerr << "Error initializing SDL" << std::endl;
+        Logger::Error("Error initializing SDL" );
         return;
     }
 
@@ -34,7 +35,7 @@ void Game::Initialize()
         );
     if(!m_window)
     {
-        std::cerr << "Error creating SDL window" << std::endl;
+        Logger::Error("Error creating SDL window");
         return;
     }
 
@@ -42,7 +43,7 @@ void Game::Initialize()
     m_renderer = SDL_CreateRenderer(m_window, -1, 0);
     if (!m_renderer)
     {
-        std::cerr << "Error creating SDL renderer" << std::endl;
+        Logger::Error("Error creating SDL renderer");
         return;
     }
 
@@ -74,7 +75,7 @@ void Game::ProcessInput()
 void Game::Setup()
 {
     playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(10.0, 200.0);
+    playerVelocity = glm::vec2(100.0, 20.0);
 }
 
 void Game::Update()
