@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\src;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\src;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\src;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\src;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,8 +151,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Logger.cpp" />
-    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\ECS\ECS.cpp" />
+    <ClCompile Include="src\Logger\Logger.cpp" />
+    <ClCompile Include="src\Game\Game.cpp" />
     <ClCompile Include="libs\glm\detail\glm.cpp" />
     <ClCompile Include="libs\imgui\imgui.cpp" />
     <ClCompile Include="libs\imgui\imgui_demo.cpp" />
@@ -162,8 +163,9 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Logger.h" />
-    <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\ECS\ECS.h" />
+    <ClInclude Include="src\Logger\Logger.h" />
+    <ClInclude Include="src\Game\Game.h" />
     <ClInclude Include="libs\glm\common.hpp" />
     <ClInclude Include="libs\glm\detail\compute_common.hpp" />
     <ClInclude Include="libs\glm\detail\compute_vector_relational.hpp" />
@@ -512,6 +514,8 @@
     <ClInclude Include="libs\SDL\SDL2-2.0.14\include\SDL_video.h" />
     <ClInclude Include="libs\SDL\SDL2-2.0.14\include\SDL_vulkan.h" />
     <ClInclude Include="libs\sol\sol.hpp" />
+    <ClInclude Include="src\Components\TransformComponent.h" />
+    <ClInclude Include="src\Systems\MovementSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="libFLAC-8.dll" />

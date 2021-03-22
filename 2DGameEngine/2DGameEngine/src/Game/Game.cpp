@@ -4,7 +4,8 @@
 #include <SDL_image.h>
 #include <glm/glm.hpp>
 
-#include "Logger.h"
+#include "Logger/Logger.h"
+#include "ECS/ECS.h"
 
 Game::Game()
     :m_IsRunning(false)
@@ -71,11 +72,8 @@ void Game::ProcessInput()
     }
 }
 
-
 void Game::Setup()
 {
-    playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(100.0, 20.0);
 }
 
 void Game::Update()
@@ -93,8 +91,6 @@ void Game::Update()
     double deltaTime = (SDL_GetTicks() - m_millisecondsPreviousFrame) / 1000.0;
     m_millisecondsPreviousFrame = SDL_GetTicks();
 
-    playerPosition.x += playerVelocity.x * deltaTime;
-    playerPosition.y += playerVelocity.y * deltaTime;
 }
 
 void Game::Run()
@@ -112,20 +108,6 @@ void Game::Render()
 {
     SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
-
-    // render tank
-    auto surface = IMG_Load("./assets/images/tank-tiger-right.png");
-    auto texture = SDL_CreateTextureFromSurface(m_renderer, surface);
-    SDL_FreeSurface(surface);
-
-    SDL_Rect dstRect = { 
-        static_cast<int>(playerPosition.x), 
-        static_cast<int>(playerPosition.y),
-        32, 
-        32 
-    };
-    SDL_RenderCopy(m_renderer, texture, NULL, &dstRect);
-    SDL_DestroyTexture(texture);
 
     SDL_RenderPresent(m_renderer);
 }

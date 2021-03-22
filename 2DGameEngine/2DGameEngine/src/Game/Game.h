@@ -1,6 +1,6 @@
 #pragma once
 #include "glm/glm.hpp"
-// constants
+
 namespace CONST
 {
 	namespace FRAMERATE
@@ -36,8 +36,6 @@ private:
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
 
-	glm::vec2 playerPosition;
-	glm::vec2 playerVelocity;
 	bool m_IsRunning = false; 
 	int m_millisecondsPreviousFrame = 0;
 };
