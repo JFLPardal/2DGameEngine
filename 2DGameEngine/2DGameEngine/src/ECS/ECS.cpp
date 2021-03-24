@@ -7,6 +7,11 @@ Entity::Entity(int id)
 {
 }
 
+bool Entity::operator==(const Entity& other) const
+{
+	return GetId() == other.GetId();
+}
+
 int Entity::GetId() const
 {
 	return m_id;
@@ -26,12 +31,19 @@ inline unsigned int Component<T>::GetId()
 /// ----------------- SYSTEM ----------------------
 void System::AddEntity(Entity entityToAdd)
 {
-
+	m_entities.push_back(entityToAdd);
 }
 
 void System::RemoveEntity(Entity entityToRemove)
 {
-
+	m_entities.erase(
+		std::remove_if(m_entities.begin(), m_entities.end(), 
+			[&entityToRemove](Entity other) 
+			{ 
+				return other == entityToRemove; 
+			}
+			), 
+		m_entities.end());
 }
 
 const std::vector<Entity>& System::GetSystemEntities() const

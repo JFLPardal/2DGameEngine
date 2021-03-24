@@ -21,6 +21,8 @@ class Entity
 public:
 	Entity(int id);
 
+	bool operator==(const Entity& other) const;
+
 	int GetId() const;
 
 private:
