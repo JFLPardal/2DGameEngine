@@ -35,7 +35,7 @@ protected:
 	static unsigned int m_nextId;
 };
 
-// used o assign a unique id to a component type
+// used to assign a unique id to a component type
 template <typename T>
 class Component : public IComponent
 {
@@ -61,9 +61,49 @@ private:
 	std::vector<Entity> m_entities;
 };
 
+// this class is used so that in 'Registry' we are not forced to specify
+// the Pool data type
+class IPool
+{
+public:
+	~IPool() = delete;
+};
+
+// wrapper around a vector
+template <typename T>
+class Pool : public IPool
+{
+public:
+	Pool(unsigned int size = 100)
+	{
+		m_data.resize(size);
+	}
+	
+	virtual ~Pool() = default;
+
+	bool IsEmpty() const { return m_data.empty(); }
+	bool GetSize() const { return m_data.size(); }
+	void Resize(unsigned int size) { m_data.resize(size); }
+	void Clear() { m_data.clear(); }
+
+	void Add(T objectToAdd) { m_data.push_back(objectToAdd); }
+	void Set(unsigned int indexToSet, T objectToSet) { m_data.at(indexToSet) = objectToSet; }
+	T& Get(unsigned int indexToGet) { return static_cast<T&>(m_data.at(indexToGet)); }
+	T& operator[](unsigned int indexToGet) { return m_data.at(indexToGet); }
+private:
+	std::vector<T> m_data;
+};
+
+// manages creation and destruction of entities, add systems,
+// and components
 class Registry
 {
-
+private:
+	// each pool contains all the information for a certain component type
+	// vector index = component type id
+	// pool index = entity id
+	std::vector<IPool*> m_componentPools;
+	unsigned int m_numEntities = 0;
 };
 
 template <typename TComponent>
