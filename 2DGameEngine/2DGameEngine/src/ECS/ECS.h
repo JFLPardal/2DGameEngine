@@ -2,6 +2,9 @@
 
 #include <bitset>
 #include <vector>
+#include <unordered_map>
+#include <typeindex>
+#include <set>
 
 namespace CONST
 {
@@ -98,12 +101,34 @@ private:
 // and components
 class Registry
 {
+public:
+	Registry() = default;
+
+	Entity CreateEntity();
+
+	void AddEntityToSystem(Entity entityToAdd);
+
 private:
-	// each pool contains all the information for a certain component type
-	// vector index = component type id
-	// pool index = entity id
-	std::vector<IPool*> m_componentPools;
+	void Update();
+
 	unsigned int m_numEntities = 0;
+
+	// stores the component's signature for each entity.
+	// this informs us of which components each entity has
+	// [ vector index = entity id ]
+	std::vector<Signature> m_entityComponentSignatures;
+
+	// these sets serve as temp Entity holder so that  they are removed/added at the end 
+	// of the frame rather than at any random time during the frame
+	std::set<Entity> m_entitiesToAdd;
+	std::set<Entity> m_entitiesToDestroy;
+
+	// each pool contains all the information for a certain component type
+	// [ vector index = component type id ]
+	// [ pool index = entity id ]
+	std::vector<IPool*> m_componentPools;
+
+	std::unordered_map<std::type_index, System*> m_systems;
 };
 
 template <typename TComponent>

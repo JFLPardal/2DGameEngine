@@ -1,5 +1,7 @@
 #include "ECS.h"
 
+#include "Logger/Logger.h"
+
 /// ----------------- ENTITY  ----------------------
 
 Entity::Entity(int id)
@@ -57,3 +59,15 @@ const Signature& System::GetComponentSignature() const
 }
 
 /// ----------------- REGISTRY ----------------------
+
+Entity Registry::CreateEntity()
+{
+	int entityId = m_numEntities++;
+	Entity createdEntity(entityId);
+
+	m_entitiesToAdd.insert(createdEntity);
+
+	Logger::Log("Entity created with id: " + std::to_string(entityId));
+
+	return createdEntity;
+}
