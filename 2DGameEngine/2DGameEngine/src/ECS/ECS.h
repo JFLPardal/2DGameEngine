@@ -106,6 +106,9 @@ public:
 
 	Entity CreateEntity();
 
+	template <typename TComponent, typename ...TArgs>
+	void AddComponent(Entity entity, TArgs&& ...args);
+
 	void AddEntityToSystem(Entity entityToAdd);
 
 private:
@@ -136,4 +139,38 @@ void System::RequireComponent()
 {
 	const auto componentId = Component<TComponent>::GetId();
 	m_componentSignature.set(componentId);
+}
+
+template <typename TComponent, typename ...TArgs>
+void Registry::AddComponent(Entity entity, TArgs&& ...args)
+{
+	const auto componentId = Component<TComponent>::GetId();
+	const auto entityId = entity.GetId();
+
+	// check if the component already exists in the componentPool
+	// resize the componentPool if it does not
+	const bool componentAlreadyExists = m_componentPools.size() >= componentId;
+	if (!componentAlreadyExists)
+	{
+		m_componentPools.resize(m_componentPools.size() + 1, nullptr);
+	}
+
+	const Pool<TComponent>* componentToAddPool = m_componentPools.at(componentId);
+	if (componentToAddPool == nullptr)
+	{
+		componentToAddPool = new Pool<TComponent>();
+	}
+
+	// check if the pool is sized large enough to fit the new component
+	const bool needsToAddComponentToPool = m_numEntities >= componentToAddPool->GetSize();
+	if (needsToAddComponentToPool)
+	{
+		componentToAddPool->Resize(m_numEntities);
+	}
+
+	TComponent componentToAdd(std::forward<TArgs>(args)...);
+	componentToAddPool->Set(entityId, componentToAdd);
+
+	// update the entity's signature to have the added component
+	m_entityComponentSignatures.at(entityId).set(componentId);
 }

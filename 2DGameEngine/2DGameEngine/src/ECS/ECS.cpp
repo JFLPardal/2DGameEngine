@@ -71,3 +71,11 @@ Entity Registry::CreateEntity()
 
 	return createdEntity;
 }
+
+void Registry::AddEntityToSystem(Entity entityToAdd)
+{
+}
+
+void Registry::Update()
+{
+}
