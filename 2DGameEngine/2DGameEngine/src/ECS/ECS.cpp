@@ -2,6 +2,8 @@
 
 #include "Logger/Logger.h"
 
+unsigned int IComponent::m_nextId = 0;
+
 /// ----------------- ENTITY  ----------------------
 
 Entity::Entity(int id)
@@ -74,6 +76,17 @@ Entity Registry::CreateEntity()
 
 void Registry::AddEntityToSystem(Entity entityToAdd)
 {
+	const auto entityToAddId = entityToAdd.GetId();
+	const auto& entityComponentSignature = m_entityComponentSignatures.at(entityToAddId);
+	for (auto& system : m_systems)
+	{
+		const auto& systemComponentSignature = system.second->GetComponentSignature();
+		const bool entityHasSystemRequirements = (entityComponentSignature & systemComponentSignature) == systemComponentSignature;
+		if (entityHasSystemRequirements)
+		{
+			system.second->AddEntity(entityToAdd);
+		}
+	}
 }
 
 void Registry::Update()

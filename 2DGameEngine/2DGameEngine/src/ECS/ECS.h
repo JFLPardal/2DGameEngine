@@ -54,6 +54,7 @@ public:
 
 	void AddEntity(Entity entityToAdd);
 	void RemoveEntity(Entity entityToRemove);
+
 	const std::vector<Entity>& GetSystemEntities() const;
 	const Signature& GetComponentSignature() const;
 
@@ -104,8 +105,10 @@ class Registry
 public:
 	Registry() = default;
 
+	// entity management
 	Entity CreateEntity();
 
+	// component management
 	template <typename TComponent, typename ...TArgs>
 	void AddComponent(Entity entity, TArgs&& ...args);
 
@@ -114,6 +117,19 @@ public:
 
 	template <typename TComponent>
 	bool HasComponent(Entity entity) const;
+
+	// system management
+	template <typename TSystem, typename ...TArgs> 
+	void AddSystem(TArgs&& ...args);
+
+	template <typename TSystem> 
+	void RemoveSystem();
+
+	template <typename TSystem> 
+	bool HasSystem() const;
+
+	template <typename TSystem> 
+	TSystem& GetSystem() const;
 
 	void AddEntityToSystem(Entity entityToAdd);
 
@@ -197,4 +213,33 @@ bool Registry::HasComponent(Entity entity) const
 	const auto entityId = entity.GetId();
 	
 	return m_entityComponentSignatures.at(entityId).test(componentId);
+}
+
+template <typename TSystem, typename ...TArgs>
+void Registry::AddSystem(TArgs&& ...args)
+{
+	TSystem* newSystem(new System(std::forward<TArgs>(args)...));
+
+	m_systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
+}
+
+template <typename TSystem>
+void Registry::RemoveSystem()
+{
+	const auto sytemToRemoveIndex = m_systems.find(std::type_index(typeid(TSystem)));
+	m_systems.erase(sytemToRemoveIndex);
+}
+
+template <typename TSystem>
+bool Registry::HasSystem() const
+{
+	const auto requestedSystemIndex = m_systems.find(std::type_index(typeid(TSystem)));
+	return requestedSystemIndex != m_systems.end();
+}
+
+template <typename TSystem>
+TSystem& Registry::GetSystem() const
+{
+	const auto systemToGet = m_systems.find(std::type_index(typeid(TSystem)));
+	return *(std::static_pointer_cast<TSystem>(systemToGet->second));
 }
