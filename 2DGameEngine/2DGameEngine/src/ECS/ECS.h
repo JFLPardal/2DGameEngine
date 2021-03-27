@@ -109,6 +109,12 @@ public:
 	template <typename TComponent, typename ...TArgs>
 	void AddComponent(Entity entity, TArgs&& ...args);
 
+	template<typename TComponent>
+	void RemoveComponent(Entity entity);
+
+	template <typename TComponent>
+	bool HasComponent(Entity entity) const;
+
 	void AddEntityToSystem(Entity entityToAdd);
 
 private:
@@ -173,4 +179,22 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args)
 
 	// update the entity's signature to have the added component
 	m_entityComponentSignatures.at(entityId).set(componentId);
+}
+
+template<typename TComponent>
+void Registry::RemoveComponent(Entity entity)
+{
+	const auto componentId = Component<TComponent>::GetId();
+	const auto entityId = entity.GetId();
+	
+	m_entityComponentSignatures.at(entityId).set(componentId, false);
+}
+
+template <typename TComponent>
+bool Registry::HasComponent(Entity entity) const
+{
+	const auto componentId = Component<TComponent>::GetId();
+	const auto entityId = entity.GetId();
+	
+	return m_entityComponentSignatures.at(entityId).test(componentId);
 }
