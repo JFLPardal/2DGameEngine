@@ -10,6 +10,7 @@
 Game::Game()
     :m_IsRunning(false)
 {
+    m_registry = new Registry();
     Logger::Log("game created");
 }
 
@@ -74,6 +75,8 @@ void Game::ProcessInput()
 
 void Game::Setup()
 {
+    Entity tank = m_registry->CreateEntity();
+    Entity truck = m_registry->CreateEntity();
 }
 
 void Game::Update()
@@ -117,4 +120,5 @@ void Game::Destroy()
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
+    delete m_registry;
 }

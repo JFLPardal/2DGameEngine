@@ -13,6 +13,7 @@ namespace CONST
 
 class SDL_Window;
 class SDL_Renderer;
+class Registry;
 
 class Game
 {
@@ -35,6 +36,8 @@ private:
 
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
+
+	Registry* m_registry = nullptr;
 
 	bool m_IsRunning = false; 
 	int m_millisecondsPreviousFrame = 0;

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <set>
+#include <memory>
 
 namespace CONST
 {
@@ -25,6 +26,7 @@ public:
 	Entity(int id);
 
 	bool operator==(const Entity& other) const;
+	bool operator< (const Entity& other) const;
 
 	int GetId() const;
 
@@ -65,6 +67,12 @@ private:
 	std::vector<Entity> m_entities;
 };
 
+template <typename TComponent>
+void System::RequireComponent()
+{
+	const auto componentId = Component<TComponent>::GetId();
+	m_componentSignature.set(componentId);
+}
 // this class is used so that in 'Registry' we are not forced to specify
 // the Pool data type
 class IPool
@@ -119,7 +127,7 @@ public:
 	bool HasComponent(Entity entity) const;
 
 	// system management
-	template <typename TSystem, typename ...TArgs> 
+	template <typename TSystem, typename ...TArgs>
 	void AddSystem(TArgs&& ...args);
 
 	template <typename TSystem> 
@@ -155,13 +163,6 @@ private:
 
 	std::unordered_map<std::type_index, System*> m_systems;
 };
-
-template <typename TComponent>
-void System::RequireComponent()
-{
-	const auto componentId = Component<TComponent>::GetId();
-	m_componentSignature.set(componentId);
-}
 
 template <typename TComponent, typename ...TArgs>
 void Registry::AddComponent(Entity entity, TArgs&& ...args)
