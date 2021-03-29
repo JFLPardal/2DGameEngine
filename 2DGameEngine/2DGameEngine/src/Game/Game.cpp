@@ -6,6 +6,9 @@
 
 #include "Logger/Logger.h"
 
+#include "Components/TransformComponent.h"
+#include "Components/RigidbodyComponent.h"
+
 Game::Game()
     :m_IsRunning(false)
 {
@@ -75,7 +78,9 @@ void Game::ProcessInput()
 void Game::Setup()
 {
     Entity tank = m_registry->CreateEntity();
-    Entity truck = m_registry->CreateEntity();
+
+    m_registry->AddComponent<TransformComponent>(tank, glm::vec2(100, 200), glm::vec2(1, 1), 0);
+    m_registry->AddComponent<RigidbodyComponent>(tank, glm::vec2(1, 2));
 }
 
 void Game::Update()

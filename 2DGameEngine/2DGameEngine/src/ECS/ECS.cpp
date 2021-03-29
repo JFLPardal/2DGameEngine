@@ -2,11 +2,11 @@
 
 #include "Logger/Logger.h"
 
-unsigned int IComponent::m_nextId = 0;
+std::size_t IComponent::m_nextId = 0;
 
 /// ----------------- ENTITY  ----------------------
 
-Entity::Entity(int id)
+Entity::Entity(std::size_t id)
 	:m_id(id)
 {
 }
@@ -18,21 +18,12 @@ bool Entity::operator==(const Entity& other) const
 
 bool Entity::operator<(const Entity& other) const
 {
-	return m_id < other.m_id;
+	return GetId() < other.GetId();
 }
 
-int Entity::GetId() const
+std::size_t Entity::GetId() const
 {
 	return m_id;
-}
-
-/// ----------------- COMPONENT ----------------------
-
-template<typename T>
-inline unsigned int Component<T>::GetId()
-{
-	const auto id = m_nextId++;
-	return id;
 }
 
 /// ----------------- SYSTEM ----------------------
@@ -67,7 +58,7 @@ const Signature& System::GetComponentSignature() const
 
 Entity Registry::CreateEntity()
 {
-	int entityId = m_numEntities++;
+	const std::size_t entityId = m_numEntities++;
 	Entity createdEntity(entityId);
 
 	m_entitiesToAdd.insert(createdEntity);
@@ -100,7 +91,7 @@ void Registry::AddEntityToSystem(Entity entityToAdd)
 
 void Registry::Update()
 {
-	for (auto entity : m_entitiesToAdd)
+	for (auto& entity : m_entitiesToAdd)
 	{
 		AddEntityToSystem(entity);
 	}

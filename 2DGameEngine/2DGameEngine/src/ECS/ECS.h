@@ -7,6 +7,8 @@
 #include <set>
 #include <memory>
 
+#include "Logger/Logger.h"
+
 namespace CONST
 {
 	namespace ECS
@@ -23,21 +25,21 @@ typedef std::bitset<CONST::ECS::MAX_COMPONENTS> Signature;
 class Entity
 {
 public:
-	Entity(int id);
+	Entity(std::size_t id);
 
 	bool operator==(const Entity& other) const;
 	bool operator< (const Entity& other) const;
 
-	int GetId() const;
+	std::size_t GetId() const;
 
 private:
-	int m_id;
+	std::size_t m_id;
 };
 
 struct IComponent
 {
 protected:
-	static unsigned int m_nextId;
+	static std::size_t m_nextId;
 };
 
 // used to assign a unique id to a component type
@@ -45,8 +47,15 @@ template <typename T>
 class Component : public IComponent
 {
 public:
-	static unsigned int GetId();
+	static std::size_t GetId();
 };
+
+template<typename T>
+inline std::size_t Component<T>::GetId()
+{
+	const auto id = m_nextId++;
+	return id;
+}
 
 class System
 {
@@ -78,7 +87,7 @@ void System::RequireComponent()
 class IPool
 {
 public:
-	~IPool() = delete;
+	virtual ~IPool() {};
 };
 
 // wrapper around a vector
@@ -86,7 +95,7 @@ template <typename T>
 class Pool : public IPool
 {
 public:
-	Pool(unsigned int size = 100)
+	Pool(std::size_t size = 100)
 	{
 		m_data.resize(size);
 	}
@@ -94,14 +103,14 @@ public:
 	virtual ~Pool() = default;
 
 	bool IsEmpty() const { return m_data.empty(); }
-	bool GetSize() const { return m_data.size(); }
-	void Resize(unsigned int size) { m_data.resize(size); }
+	std::size_t GetSize() const { return m_data.size(); }
+	void Resize(std::size_t size) { m_data.resize(size); }
 	void Clear() { m_data.clear(); }
 
 	void Add(T objectToAdd) { m_data.push_back(objectToAdd); }
-	void Set(unsigned int indexToSet, T objectToSet) { m_data.at(indexToSet) = objectToSet; }
-	T& Get(unsigned int indexToGet) { return static_cast<T&>(m_data.at(indexToGet)); }
-	T& operator[](unsigned int indexToGet) { return m_data.at(indexToGet); }
+	void Set(std::size_t indexToSet, T objectToSet) { m_data.at(indexToSet) = objectToSet; }
+	T& Get(std::size_t indexToGet) { return static_cast<T&>(m_data.at(indexToGet)); }
+	T& operator[](std::size_t indexToGet) { return m_data.at(indexToGet); }
 private:
 	std::vector<T> m_data;
 };
@@ -144,7 +153,7 @@ public:
 private:
 	void Update();
 
-	unsigned int m_numEntities = 0;
+	std::size_t m_numEntities = 0;
 
 	// stores the component's signature for each entity.
 	// this informs us of which components each entity has
@@ -172,10 +181,10 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args)
 
 	// check if the component already exists in the componentPool
 	// resize the componentPool if it does not
-	const bool componentAlreadyExists = m_componentPools.size() >= componentId;
+	const bool componentAlreadyExists = m_componentPools.size() > componentId;
 	if (!componentAlreadyExists)
 	{
-		m_componentPools.resize(m_componentPools.size() + 1, nullptr);
+		m_componentPools.resize(componentId + 1, nullptr);
 	}
 
 	if (!m_componentPools.at(componentId))
@@ -197,6 +206,8 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args)
 
 	// update the entity's signature to have the added component
 	m_entityComponentSignatures.at(entityId).set(componentId);
+
+	Logger::Log("Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId));
 }
 
 template<typename TComponent>
