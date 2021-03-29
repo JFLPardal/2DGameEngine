@@ -5,12 +5,11 @@
 #include <glm/glm.hpp>
 
 #include "Logger/Logger.h"
-#include "ECS/ECS.h"
 
 Game::Game()
     :m_IsRunning(false)
 {
-    m_registry = new Registry();
+    m_registry = std::make_unique<Registry>();
     Logger::Log("game created");
 }
 
@@ -120,5 +119,4 @@ void Game::Destroy()
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
-    delete m_registry;
 }
