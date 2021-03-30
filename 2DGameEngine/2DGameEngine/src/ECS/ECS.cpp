@@ -60,6 +60,7 @@ Entity Registry::CreateEntity()
 {
 	const std::size_t entityId = m_numEntities++;
 	Entity createdEntity(entityId);
+	createdEntity.m_registry = this;
 
 	m_entitiesToAdd.insert(createdEntity);
 

@@ -17,7 +17,6 @@ namespace CONST
 	}
 }
 
-
 // Signature represents the components that a Entity has or that
 // an entity must have for a system to work on it
 typedef std::bitset<CONST::ECS::MAX_COMPONENTS> Signature;
@@ -32,6 +31,16 @@ public:
 
 	std::size_t GetId() const;
 
+	template <typename TComponent, typename ...TArgs>
+	void AddComponent(TArgs&&... args);
+	template <typename TComponent>
+	void RemoveComponent();
+	template <typename TComponent>
+	bool HasComponent() const;
+	template <typename TComponent>
+	TComponent& GetComponent();
+
+	class Registry* m_registry = nullptr; // forward declaration
 private:
 	std::size_t m_id;
 };
@@ -53,7 +62,7 @@ public:
 template<typename T>
 inline std::size_t Component<T>::GetId()
 {
-	const auto id = m_nextId++;
+	static auto id = m_nextId++;
 	return id;
 }
 
@@ -76,12 +85,6 @@ private:
 	std::vector<Entity> m_entities;
 };
 
-template <typename TComponent>
-void System::RequireComponent()
-{
-	const auto componentId = Component<TComponent>::GetId();
-	m_componentSignature.set(componentId);
-}
 // this class is used so that in 'Registry' we are not forced to specify
 // the Pool data type
 class IPool
@@ -134,6 +137,9 @@ public:
 
 	template <typename TComponent>
 	bool HasComponent(Entity entity) const;
+	
+	template <typename TComponent>
+	TComponent& GetComponent(Entity entity);
 
 	// system management
 	template <typename TSystem, typename ...TArgs>
@@ -172,6 +178,46 @@ private:
 
 	std::unordered_map<std::type_index, std::shared_ptr<System>> m_systems;
 };
+
+
+// ------------------------------------ ENTITY TEMPLATE FUNCTIONS-----------------
+
+template <typename TComponent, typename ...TArgs>
+void Entity::AddComponent(TArgs&&... args)
+{
+	m_registry->AddComponent<TComponent>(*this, args...);
+}
+
+template <typename TComponent>
+void Entity::RemoveComponent()
+{
+	m_registry->RemoveComponent<TComponent>(*this);
+}
+
+template <typename TComponent>
+bool Entity::HasComponent() const
+{
+	return m_registry->HasComponent<TComponent>(*this);
+}
+
+template <typename TComponent>
+TComponent& Entity::GetComponent()
+{
+	return m_registry->GetComponent<TComponent>(*this);
+}
+
+
+// ------------------------------------ SYSTEM TEMPLATE FUNCTIONS-----------------
+
+template <typename TComponent>
+void System::RequireComponent()
+{
+	const auto componentId = Component<TComponent>::GetId();
+	m_componentSignature.set(componentId);
+}
+
+
+// ------------------------------------ REGISTRY TEMPLATE FUNCTIONS-----------------
 
 template <typename TComponent, typename ...TArgs>
 void Registry::AddComponent(Entity entity, TArgs&& ...args)
@@ -217,6 +263,8 @@ void Registry::RemoveComponent(Entity entity)
 	const auto entityId = entity.GetId();
 	
 	m_entityComponentSignatures.at(entityId).set(componentId, false);
+
+	Logger::Log("Component id = " + std::to_string(componentId) + " was removed from entity id = " + std::to_string(entityId));
 }
 
 template <typename TComponent>
@@ -226,6 +274,15 @@ bool Registry::HasComponent(Entity entity) const
 	const auto entityId = entity.GetId();
 	
 	return m_entityComponentSignatures.at(entityId).test(componentId);
+}
+
+template <typename TComponent>
+TComponent& Registry::GetComponent(Entity entity)
+{
+	const auto componentId = Component<TComponent>::GetId();
+	const auto entityId = entity.GetId();
+
+	return m_componentPools.at(componentId)->Get(entityId);
 }
 
 template <typename TSystem, typename ...TArgs>
