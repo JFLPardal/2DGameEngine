@@ -8,6 +8,7 @@
 
 #include "Components/TransformComponent.h"
 #include "Components/RigidbodyComponent.h"
+#include "Systems/MovementSystem.h"
 
 Game::Game()
     :m_IsRunning(false)
@@ -77,13 +78,13 @@ void Game::ProcessInput()
 
 void Game::Setup()
 {
+    // add system to the game
+    m_registry->AddSystem<MovementSystem>();
+
     Entity tank = m_registry->CreateEntity();
 
     tank.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
     tank.AddComponent<RigidbodyComponent>(glm::vec2(1, 2));
-
-    tank.RemoveComponent<RigidbodyComponent>();
-    tank.RemoveComponent<TransformComponent>();
 }
 
 void Game::Update()
@@ -101,6 +102,10 @@ void Game::Update()
     double deltaTime = (SDL_GetTicks() - m_millisecondsPreviousFrame) / 1000.0;
     m_millisecondsPreviousFrame = SDL_GetTicks();
 
+    m_registry->GetSystem<MovementSystem>().Update(deltaTime);
+
+    // update the registry to add or remove entities that were waiting for the end of the frame
+    m_registry->Update();
 }
 
 void Game::Run()

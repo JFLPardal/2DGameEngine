@@ -156,9 +156,9 @@ public:
 
 	void AddEntityToSystem(Entity entityToAdd);
 
-private:
 	void Update();
 
+private:
 	std::size_t m_numEntities = 0;
 
 	// stores the component's signature for each entity.
@@ -281,8 +281,9 @@ TComponent& Registry::GetComponent(Entity entity)
 {
 	const auto componentId = Component<TComponent>::GetId();
 	const auto entityId = entity.GetId();
+	auto componentPool = std::static_pointer_cast<Pool<TComponent>>(m_componentPools.at(componentId));
 
-	return m_componentPools.at(componentId)->Get(entityId);
+	return componentPool->Get(entityId);
 }
 
 template <typename TSystem, typename ...TArgs>
@@ -310,6 +311,6 @@ bool Registry::HasSystem() const
 template <typename TSystem>
 TSystem& Registry::GetSystem() const
 {
-	const auto systemToGet = m_systems.find(std::type_index(typeid(TSystem)));
+	auto systemToGet = m_systems.find(std::type_index(typeid(TSystem)));
 	return *(std::static_pointer_cast<TSystem>(systemToGet->second));
 }
