@@ -52,6 +52,7 @@ protected:
 };
 
 // used to assign a unique id to a component type
+// ALL COMPONENTS CTOR NEED DEFAULT VALUES OR AN ERROR WILL OCCUR
 template <typename T>
 class Component : public IComponent
 {

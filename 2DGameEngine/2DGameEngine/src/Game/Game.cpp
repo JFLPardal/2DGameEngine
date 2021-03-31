@@ -8,7 +8,9 @@
 
 #include "Components/TransformComponent.h"
 #include "Components/RigidbodyComponent.h"
+#include "Components/SpriteComponent.h"
 #include "Systems/MovementSystem.h"
+#include "Systems/RenderSystem.h"
 
 Game::Game()
     :m_IsRunning(false)
@@ -80,11 +82,17 @@ void Game::Setup()
 {
     // add system to the game
     m_registry->AddSystem<MovementSystem>();
+    m_registry->AddSystem<RenderSystem>();
 
     Entity tank = m_registry->CreateEntity();
-
     tank.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
-    tank.AddComponent<RigidbodyComponent>(glm::vec2(1, 2));
+    tank.AddComponent<RigidbodyComponent>(glm::vec2(20, 8));
+    tank.AddComponent<SpriteComponent>(10, 10);
+
+    Entity truck = m_registry->CreateEntity();
+    truck.AddComponent<TransformComponent>(glm::vec2(500, 400), glm::vec2(1, 1), 0);
+    truck.AddComponent<RigidbodyComponent>(glm::vec2(-50, -20));
+    truck.AddComponent<SpriteComponent>(30, 20);
 }
 
 void Game::Update()
@@ -123,6 +131,8 @@ void Game::Render()
 {
     SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
+
+    m_registry->GetSystem<RenderSystem>().Update(m_renderer);
 
     SDL_RenderPresent(m_renderer);
 }
