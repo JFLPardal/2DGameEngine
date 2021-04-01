@@ -13,9 +13,10 @@
 #include "Systems/RenderSystem.h"
 
 Game::Game()
-    :m_IsRunning(false)
+    : m_IsRunning(false)
+    , m_assetStore(std::make_unique<AssetStore>())
+    , m_registry(std::make_unique<Registry>())
 {
-    m_registry = std::make_unique<Registry>();
     Logger::Log("game created");
 }
 
@@ -84,15 +85,18 @@ void Game::Setup()
     m_registry->AddSystem<MovementSystem>();
     m_registry->AddSystem<RenderSystem>();
 
+    m_assetStore->AddTexture(m_renderer, "tank-image", "./assets/images/tank-panther-right.png");
+    m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
+
     Entity tank = m_registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
     tank.AddComponent<RigidbodyComponent>(glm::vec2(20, 8));
-    tank.AddComponent<SpriteComponent>(10, 10);
+    tank.AddComponent<SpriteComponent>("tank-image", 10, 10);
 
     Entity truck = m_registry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(500, 400), glm::vec2(1, 1), 0);
     truck.AddComponent<RigidbodyComponent>(glm::vec2(-50, -20));
-    truck.AddComponent<SpriteComponent>(30, 20);
+    truck.AddComponent<SpriteComponent>("truck-image", 30, 20);
 }
 
 void Game::Update()

@@ -2,6 +2,8 @@
 #include "glm/glm.hpp"
 #include <memory>
 #include "ECS/ECS.h"
+#include "AssetStore/AssetStore.h"
+
 namespace CONST
 {
 	namespace FRAMERATE
@@ -14,7 +16,6 @@ namespace CONST
 
 class SDL_Window;
 class SDL_Renderer;
-//class Registry;
 
 class Game
 {
@@ -39,6 +40,7 @@ private:
 	SDL_Renderer* m_renderer = nullptr;
 
 	std::unique_ptr<Registry> m_registry;
+	std::unique_ptr<AssetStore> m_assetStore;
 
 	bool m_IsRunning = false; 
 	int m_millisecondsPreviousFrame = 0;
