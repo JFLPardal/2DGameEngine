@@ -35,6 +35,7 @@ private:
 	void Render();
 
 	void Setup();
+	void LoadLevel(Uint8 levelNumber);
 
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;

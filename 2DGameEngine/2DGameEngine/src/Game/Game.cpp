@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <fstream>
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glm/glm.hpp>
@@ -81,13 +83,49 @@ void Game::ProcessInput()
 
 void Game::Setup()
 {
+    LoadLevel(1);
+}
+
+#include <iostream>
+void Game::LoadLevel(Uint8 levelNumber)
+{
     // add system to the game
     m_registry->AddSystem<MovementSystem>();
     m_registry->AddSystem<RenderSystem>();
 
+    // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "tank-image", "./assets/images/tank-panther-right.png");
     m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
+    m_assetStore->AddTexture(m_renderer, "jungle-tileset", "./assets/tilemaps/jungle.png");
 
+    // load tilemap
+    const Uint8 tileSize = 32;
+    double tileScale = 2.0;
+    const Uint8 mapNumCols = 25;
+    const Uint8 mapNumRows = 20;
+
+    std::fstream mapFile;
+    mapFile.open("./assets/tilemaps/jungle.map");
+
+    for (int y = 0; y < mapNumRows; y++)
+    {
+        for(int x = 0; x < mapNumCols; x++)
+        {
+            char ch;
+            mapFile.get(ch);
+            const int tilemapYIndex = std::atoi(&ch) * tileSize;
+            mapFile.get(ch);
+            const int tilemapXIndex = std::atoi(&ch) * tileSize;
+            mapFile.ignore();
+
+            Entity tile = m_registry->CreateEntity();
+            tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0);
+            tile.AddComponent<SpriteComponent>("jungle-tileset", tileSize, tileSize, tilemapXIndex, tilemapYIndex);
+        }
+    }
+    mapFile.close();
+
+    // create entities
     Entity tank = m_registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
     tank.AddComponent<RigidbodyComponent>(glm::vec2(20, 8));
@@ -97,6 +135,7 @@ void Game::Setup()
     truck.AddComponent<TransformComponent>(glm::vec2(500, 400), glm::vec2(1, 1), 0);
     truck.AddComponent<RigidbodyComponent>(glm::vec2(-50, -20));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32);
+
 }
 
 void Game::Update()
