@@ -91,12 +91,12 @@ void Game::Setup()
     Entity tank = m_registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
     tank.AddComponent<RigidbodyComponent>(glm::vec2(20, 8));
-    tank.AddComponent<SpriteComponent>("tank-image", 10, 10);
+    tank.AddComponent<SpriteComponent>("tank-image", 32, 32);
 
     Entity truck = m_registry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(500, 400), glm::vec2(1, 1), 0);
     truck.AddComponent<RigidbodyComponent>(glm::vec2(-50, -20));
-    truck.AddComponent<SpriteComponent>("truck-image", 30, 20);
+    truck.AddComponent<SpriteComponent>("truck-image", 32, 32);
 }
 
 void Game::Update()
@@ -136,7 +136,7 @@ void Game::Render()
     SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
 
-    m_registry->GetSystem<RenderSystem>().Update(m_renderer);
+    m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore);
 
     SDL_RenderPresent(m_renderer);
 }
