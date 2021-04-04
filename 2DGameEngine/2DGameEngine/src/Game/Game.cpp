@@ -11,8 +11,11 @@
 #include "Components/TransformComponent.h"
 #include "Components/RigidbodyComponent.h"
 #include "Components/SpriteComponent.h"
+#include "Components/AnimationComponent.h"
+
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
+#include "Systems/AnimationSystem.h"
 
 Game::Game()
     : m_IsRunning(false)
@@ -92,8 +95,11 @@ void Game::LoadLevel(Uint8 levelNumber)
     // add system to the game
     m_registry->AddSystem<MovementSystem>();
     m_registry->AddSystem<RenderSystem>();
+    m_registry->AddSystem<AnimationSystem>();
 
     // add assets to assetStore
+    m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper.png");
+    m_assetStore->AddTexture(m_renderer, "radar-image", "./assets/images/radar.png");
     m_assetStore->AddTexture(m_renderer, "tank-image", "./assets/images/tank-panther-right.png");
     m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
     m_assetStore->AddTexture(m_renderer, "jungle-tileset", "./assets/tilemaps/jungle.png");
@@ -126,6 +132,18 @@ void Game::LoadLevel(Uint8 levelNumber)
     mapFile.close();
 
     // create entities
+    Entity chopper = m_registry->CreateEntity();
+    chopper.AddComponent<TransformComponent>(glm::vec2(20, 400), glm::vec2(1, 1), 0);
+    chopper.AddComponent<RigidbodyComponent>(glm::vec2(30, 0));
+    chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
+    chopper.AddComponent<AnimationComponent>(2, 12, true);
+    
+    Entity radar = m_registry->CreateEntity();
+    radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
+    radar.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
+    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 3);
+    radar.AddComponent<AnimationComponent>(8, 5, true);
+    
     Entity tank = m_registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
     tank.AddComponent<RigidbodyComponent>(glm::vec2(20, 8));
@@ -154,6 +172,7 @@ void Game::Update()
     m_millisecondsPreviousFrame = SDL_GetTicks();
 
     m_registry->GetSystem<MovementSystem>().Update(deltaTime);
+    m_registry->GetSystem<AnimationSystem>().Update();
 
     // update the registry to add or remove entities that were waiting for the end of the frame
     m_registry->Update();
