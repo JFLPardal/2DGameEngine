@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include "SDL.h"
 
 #include "ECS/ECS.h"
@@ -19,10 +21,33 @@ public:
 
 	void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore)
 	{
-		for (auto entity : GetSystemEntities())
+		// sort all the entities by their z-index
+		struct RenderableEntity
 		{
-			const auto transform = entity.GetComponent<TransformComponent>();
-			const auto sprite = entity.GetComponent<SpriteComponent>();
+			TransformComponent transformComponent;
+			SpriteComponent spriteComponent;
+		};
+
+		std::vector<RenderableEntity> renderableEntities;
+		for (const auto& entity : GetSystemEntities())
+		{
+			RenderableEntity renderableEntity;
+			renderableEntity.spriteComponent = entity.GetComponent<SpriteComponent>();
+			renderableEntity.transformComponent = entity.GetComponent<TransformComponent>();
+			renderableEntities.emplace_back(renderableEntity);
+		}
+
+		std::sort(renderableEntities.begin(), renderableEntities.end(),
+			[](const RenderableEntity& first, const RenderableEntity& second)
+			{
+				return first.spriteComponent.m_zIndex < second.spriteComponent.m_zIndex;
+			}
+		);
+
+		for (auto entity : renderableEntities)
+		{
+			const auto transform = entity.transformComponent;
+			const auto sprite = entity.spriteComponent;
 
 			SDL_Rect srcRect = sprite.m_textureRect;
 

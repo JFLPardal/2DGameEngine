@@ -44,7 +44,7 @@ void System::RemoveEntity(Entity entityToRemove)
 		m_entities.end());
 }
 
-const std::vector<Entity>& System::GetSystemEntities() const
+ const std::vector<Entity>& System::GetSystemEntities() const
 {
 	return m_entities;
 }

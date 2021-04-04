@@ -38,7 +38,7 @@ public:
 	template <typename TComponent>
 	bool HasComponent() const;
 	template <typename TComponent>
-	TComponent& GetComponent();
+	TComponent& GetComponent() const;
 
 	class Registry* m_registry = nullptr; // forward declaration
 private:
@@ -140,7 +140,7 @@ public:
 	bool HasComponent(Entity entity) const;
 	
 	template <typename TComponent>
-	TComponent& GetComponent(Entity entity);
+	TComponent& GetComponent(Entity entity) const;
 
 	// system management
 	template <typename TSystem, typename ...TArgs>
@@ -202,7 +202,7 @@ bool Entity::HasComponent() const
 }
 
 template <typename TComponent>
-TComponent& Entity::GetComponent()
+TComponent& Entity::GetComponent() const
 {
 	return m_registry->GetComponent<TComponent>(*this);
 }
@@ -278,7 +278,7 @@ bool Registry::HasComponent(Entity entity) const
 }
 
 template <typename TComponent>
-TComponent& Registry::GetComponent(Entity entity)
+TComponent& Registry::GetComponent(Entity entity) const
 {
 	const auto componentId = Component<TComponent>::GetId();
 	const auto entityId = entity.GetId();
