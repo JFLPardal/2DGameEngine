@@ -20,8 +20,8 @@ public:
 		for (auto firstEntityIterator = systemEntities.begin(); firstEntityIterator != systemEntities.end(); firstEntityIterator++)
 		{
 			const Entity first = *firstEntityIterator;
-			const auto firstTransform = first.GetComponent<TransformComponent>();
-			const auto firstCollider = first.GetComponent<BoxColliderComponent>();
+			const auto& firstTransform = first.GetComponent<TransformComponent>();
+			auto& firstCollider = first.GetComponent<BoxColliderComponent>();
 
 			for (auto secondEntityIterator = firstEntityIterator; secondEntityIterator != systemEntities.end(); secondEntityIterator++)
 			{
@@ -29,13 +29,20 @@ public:
 				const bool isNotSameEntity = first != second;
 				if (isNotSameEntity)
 				{
-					const auto secondTransform = second.GetComponent<TransformComponent>();
-					const auto secondCollider = second.GetComponent<BoxColliderComponent>();
+					const auto& secondTransform = second.GetComponent<TransformComponent>();
+					auto& secondCollider = second.GetComponent<BoxColliderComponent>();
 
 					const bool collisionDetected = CheckAABBCollision(firstTransform, firstCollider, secondTransform, secondCollider);
 					if (collisionDetected)
 					{
+						firstCollider.m_isColliding = true;
+						secondCollider.m_isColliding = true;
 						Logger::Log("colliding");
+					}
+					else
+					{
+						firstCollider.m_isColliding = false;
+						secondCollider.m_isColliding = false;
 					}
 				}
 			}

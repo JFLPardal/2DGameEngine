@@ -18,6 +18,7 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/AnimationSystem.h"
 #include "Systems/CollisionSystem.h"
+#include "Systems/RenderColliderSystem.h"
 
 Game::Game()
     : m_IsRunning(false)
@@ -81,6 +82,10 @@ void Game::ProcessInput()
             {
                 m_IsRunning = false;
             }
+            else if (event.key.keysym.sym == SDL_KeyCode::SDLK_d)
+            {
+                m_shouldRenderDebug = !m_shouldRenderDebug;
+            }
             break;
         }
     }
@@ -98,6 +103,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<RenderSystem>();
     m_registry->AddSystem<AnimationSystem>();
     m_registry->AddSystem<CollisionSystem>();
+    m_registry->AddSystem<RenderColliderSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper.png");
@@ -199,6 +205,10 @@ void Game::Render()
     SDL_RenderClear(m_renderer);
 
     m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore);
+    if (m_shouldRenderDebug)
+    {
+        m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer);
+    }
 
     SDL_RenderPresent(m_renderer);
 }

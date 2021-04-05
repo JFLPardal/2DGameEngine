@@ -1,0 +1,42 @@
+#pragma once
+
+#include "SDL.h"
+
+#include "ECS/ECS.h"
+
+#include "Components/TransformComponent.h"
+#include "Components/BoxColliderComponent.h"
+
+class RenderColliderSystem : public System
+{
+public:
+	RenderColliderSystem()
+	{
+		RequireComponent<TransformComponent>();
+		RequireComponent<BoxColliderComponent>();
+	}
+
+	void Update(SDL_Renderer* renderer)
+	{
+		for (auto& entity : GetSystemEntities())
+		{
+			const auto& transform = entity.GetComponent<TransformComponent>();
+			const auto& collider = entity.GetComponent<BoxColliderComponent>();
+			SDL_Rect collisionBox{
+				static_cast<int>(transform.m_position.x + collider.m_offset.x), 
+				static_cast<int>(transform.m_position.y + collider.m_offset.y), 
+				static_cast<int>(collider.m_width),
+				static_cast<int>(collider.m_height)};
+			
+			if (collider.m_isColliding)
+			{
+				SDL_SetRenderDrawColor(renderer, 0, 255, 0, 1);
+			}
+			else
+			{
+				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 1);
+			}
+			SDL_RenderDrawRect(renderer, &collisionBox);
+		}
+	}
+};

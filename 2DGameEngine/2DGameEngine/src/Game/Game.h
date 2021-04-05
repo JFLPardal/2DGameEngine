@@ -1,6 +1,7 @@
 #pragma once
-#include "glm/glm.hpp"
 #include <memory>
+#include <glm/glm.hpp>
+
 #include "ECS/ECS.h"
 #include "AssetStore/AssetStore.h"
 
@@ -14,8 +15,8 @@ namespace CONST
 	}
 }
 
-class SDL_Window;
-class SDL_Renderer;
+struct SDL_Window;
+struct SDL_Renderer;
 
 class Game
 {
@@ -45,5 +46,7 @@ private:
 
 	bool m_IsRunning = false; 
 	int m_millisecondsPreviousFrame = 0;
+
+	bool m_shouldRenderDebug = false;
 };
 
