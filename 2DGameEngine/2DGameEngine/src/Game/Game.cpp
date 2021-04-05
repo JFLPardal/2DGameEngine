@@ -12,10 +12,12 @@
 #include "Components/RigidbodyComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/AnimationComponent.h"
+#include "Components/BoxColliderComponent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/AnimationSystem.h"
+#include "Systems/CollisionSystem.h"
 
 Game::Game()
     : m_IsRunning(false)
@@ -89,13 +91,13 @@ void Game::Setup()
     LoadLevel(1);
 }
 
-#include <iostream>
 void Game::LoadLevel(Uint8 levelNumber)
 {
     // add system to the game
     m_registry->AddSystem<MovementSystem>();
     m_registry->AddSystem<RenderSystem>();
     m_registry->AddSystem<AnimationSystem>();
+    m_registry->AddSystem<CollisionSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper.png");
@@ -145,15 +147,16 @@ void Game::LoadLevel(Uint8 levelNumber)
     radar.AddComponent<AnimationComponent>(8, 5, true);
     
     Entity tank = m_registry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
-    tank.AddComponent<RigidbodyComponent>(glm::vec2(20, 8));
+    tank.AddComponent<TransformComponent>(glm::vec2(300, 20), glm::vec2(1, 1), 0);
+    tank.AddComponent<RigidbodyComponent>(glm::vec2(0, 55));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
+    tank.AddComponent<BoxColliderComponent>(32, 32);
 
     Entity truck = m_registry->CreateEntity();
-    truck.AddComponent<TransformComponent>(glm::vec2(100, 200), glm::vec2(1, 1), 0);
-    truck.AddComponent<RigidbodyComponent>(glm::vec2(22, 8));
+    truck.AddComponent<TransformComponent>(glm::vec2(300, 200), glm::vec2(1, 1), 0);
+    truck.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
-
+    truck.AddComponent<BoxColliderComponent>(32, 32);
 }
 
 void Game::Update()
@@ -173,6 +176,7 @@ void Game::Update()
 
     m_registry->GetSystem<MovementSystem>().Update(deltaTime);
     m_registry->GetSystem<AnimationSystem>().Update();
+    m_registry->GetSystem<CollisionSystem>().Update();
 
     // update the registry to add or remove entities that were waiting for the end of the frame
     m_registry->Update();

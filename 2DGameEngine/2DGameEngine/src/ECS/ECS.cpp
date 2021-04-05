@@ -16,6 +16,11 @@ bool Entity::operator==(const Entity& other) const
 	return GetId() == other.GetId();
 }
 
+bool Entity::operator!=(const Entity& other) const
+{
+	return GetId() != other.GetId();
+}
+
 bool Entity::operator<(const Entity& other) const
 {
 	return GetId() < other.GetId();
@@ -70,7 +75,7 @@ Entity Registry::CreateEntity()
 		m_entityComponentSignatures.resize(entityId + 1);
 	}
 
-	Logger::Log("Entity created with id: " + std::to_string(entityId));
+	//Logger::Log("Entity created with id: " + std::to_string(entityId));
 
 	return createdEntity;
 }

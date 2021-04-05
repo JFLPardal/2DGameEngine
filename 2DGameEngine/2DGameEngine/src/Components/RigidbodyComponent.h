@@ -2,6 +2,9 @@
 
 #include "glm/glm.hpp"
 
+/*
+* \param glm::vec2 velocity = (0,0)
+*/
 struct RigidbodyComponent
 {
 	glm::vec2 m_velocity;

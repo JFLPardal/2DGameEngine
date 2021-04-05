@@ -27,6 +27,7 @@ public:
 	Entity(std::size_t id);
 
 	bool operator==(const Entity& other) const;
+	bool operator!=(const Entity& other) const;
 	bool operator< (const Entity& other) const;
 
 	std::size_t GetId() const;
@@ -254,7 +255,7 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args)
 	// update the entity's signature to have the added component
 	m_entityComponentSignatures.at(entityId).set(componentId);
 
-	Logger::Log("Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId));
+	//Logger::Log("Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId));
 }
 
 template<typename TComponent>

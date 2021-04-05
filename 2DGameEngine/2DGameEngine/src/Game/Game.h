@@ -27,8 +27,8 @@ public:
 	void Run();
 	void Destroy();
 
-	int m_windowWidth = 800;
-	int m_windowHeight = 600;
+	int m_windowWidth = 1200;
+	int m_windowHeight = 800;
 private:
 	void ProcessInput();
 	void Update();

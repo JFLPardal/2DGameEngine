@@ -24,9 +24,9 @@ public:
 			transform.m_position.x += (rigidbody.m_velocity.x * deltaTime);
 			transform.m_position.y += (rigidbody.m_velocity.y * deltaTime);
 
-			Logger::Log("Entity id = " + std::to_string(entity.GetId())
+			/*Logger::Log("Entity id = " + std::to_string(entity.GetId())
 				+ " position: [" + std::to_string(transform.m_position.x) 
-				+ ", " + std::to_string(transform.m_position.y) + "]");
+			+ ", " + std::to_string(transform.m_position.y) + "]");*/	
 		}
 	}
 };
