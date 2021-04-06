@@ -11,6 +11,11 @@ Entity::Entity(std::size_t id)
 {
 }
 
+void Entity::Destroy()
+{
+	m_registry->DestroyEntity(*this);
+}
+
 bool Entity::operator==(const Entity& other) const
 {
 	return GetId() == other.GetId();
@@ -63,24 +68,41 @@ const Signature& System::GetComponentSignature() const
 
 Entity Registry::CreateEntity()
 {
-	const std::size_t entityId = m_numEntities++;
+	std::size_t entityId;
+
+	const bool thereAreFreeIds = !m_freeIds.empty();
+	if (thereAreFreeIds)
+	{
+		entityId = m_freeIds.front();
+		m_freeIds.pop_front();
+	}
+	else
+	{
+		entityId = m_numEntities++;
+
+		bool entityComponentSignatureNotBigEnough = entityId >= m_entityComponentSignatures.size();
+		if (entityComponentSignatureNotBigEnough)
+		{
+			m_entityComponentSignatures.resize(entityId + 1);
+		}
+	}
+
 	Entity createdEntity(entityId);
 	createdEntity.m_registry = this;
 
 	m_entitiesToAdd.insert(createdEntity);
-
-	bool entityComponentSignatureNotBigEnough = entityId >= m_entityComponentSignatures.size();
-	if (entityComponentSignatureNotBigEnough)
-	{
-		m_entityComponentSignatures.resize(entityId + 1);
-	}
-
+	 
 	//Logger::Log("Entity created with id: " + std::to_string(entityId));
 
 	return createdEntity;
 }
 
-void Registry::AddEntityToSystem(Entity entityToAdd)
+void Registry::DestroyEntity(Entity& entityToDestroy)
+{
+	m_entitiesToDestroy.insert(entityToDestroy);
+}
+
+void Registry::AddEntityToSystems(Entity entityToAdd)
 {
 	const auto entityToAddId = entityToAdd.GetId();
 	const auto& entityComponentSignature = m_entityComponentSignatures.at(entityToAddId);
@@ -95,11 +117,29 @@ void Registry::AddEntityToSystem(Entity entityToAdd)
 	}
 }
 
+void Registry::RemoveEntityFromSystems(Entity entityToRemove)
+{
+	for (auto& system : m_systems)
+	{
+		system.second->RemoveEntity(entityToRemove);
+	}
+}
+
 void Registry::Update()
 {
+	// add new entities
 	for (auto& entity : m_entitiesToAdd)
 	{
-		AddEntityToSystem(entity);
+		AddEntityToSystems(entity);
 	}
 	m_entitiesToAdd.clear();
+
+	// destroy entities
+	for (auto& entity : m_entitiesToDestroy)
+	{
+		RemoveEntityFromSystems(entity);
+		m_entityComponentSignatures.at(entity.GetId()).reset();
+		m_freeIds.push_back(entity.GetId());
+	}
+	m_entitiesToDestroy.clear(); 
 }

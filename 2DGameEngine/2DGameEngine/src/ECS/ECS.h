@@ -6,6 +6,7 @@
 #include <typeindex>
 #include <set>
 #include <memory>
+#include <deque>
 
 #include "Logger/Logger.h"
 
@@ -25,6 +26,7 @@ class Entity
 {
 public:
 	Entity(std::size_t id);
+	void Destroy();
 
 	bool operator==(const Entity& other) const;
 	bool operator!=(const Entity& other) const;
@@ -129,6 +131,7 @@ public:
 
 	// entity management
 	Entity CreateEntity();
+	void DestroyEntity(Entity& entityToDestroy);
 
 	// component management
 	template <typename TComponent, typename ...TArgs>
@@ -156,7 +159,8 @@ public:
 	template <typename TSystem> 
 	TSystem& GetSystem() const;
 
-	void AddEntityToSystem(Entity entityToAdd);
+	void AddEntityToSystems(Entity entityToAdd);
+	void RemoveEntityFromSystems(Entity entityToAdd);
 
 	void Update();
 
@@ -172,6 +176,9 @@ private:
 	// of the frame rather than at any random time during the frame
 	std::set<Entity> m_entitiesToAdd;
 	std::set<Entity> m_entitiesToDestroy;
+
+	// list of free ids from previously destroyed entitites
+	std::deque<std::size_t> m_freeIds;
 
 	// each pool contains all the information for a certain component type
 	// [ vector index = component type id ]
