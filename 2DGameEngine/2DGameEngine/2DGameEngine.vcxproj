@@ -170,6 +170,8 @@
     <ClInclude Include="src\Components\RigidbodyComponent.h" />
     <ClInclude Include="src\Components\SpriteComponent.h" />
     <ClInclude Include="src\ECS\ECS.h" />
+    <ClInclude Include="src\EventBus\EventBus.h" />
+    <ClInclude Include="src\Events\CollisionEvent.h" />
     <ClInclude Include="src\Logger\Logger.h" />
     <ClInclude Include="src\Game\Game.h" />
     <ClInclude Include="libs\glm\common.hpp" />

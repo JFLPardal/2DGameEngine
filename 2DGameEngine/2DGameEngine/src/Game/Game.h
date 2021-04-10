@@ -4,6 +4,7 @@
 
 #include "ECS/ECS.h"
 #include "AssetStore/AssetStore.h"
+#include "EventBus/EventBus.h"
 
 namespace CONST
 {
@@ -43,6 +44,7 @@ private:
 
 	std::unique_ptr<Registry> m_registry;
 	std::unique_ptr<AssetStore> m_assetStore;
+	std::unique_ptr<EventBus> m_eventBus;
 
 	bool m_IsRunning = false; 
 	int m_millisecondsPreviousFrame = 0;
