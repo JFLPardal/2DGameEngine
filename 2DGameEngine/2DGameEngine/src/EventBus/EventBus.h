@@ -3,7 +3,7 @@
 #include <map>
 #include <list>
 #include <typeindex>
-#include <memory>
+#include <functional>
 
 #include "Logger/Logger.h"
 #include "Event.h"
@@ -19,15 +19,15 @@ public:
 		Call(eventToExecute);
 	}
 
-protected:
+private:
 	virtual void Call(Event& eventToCall) = 0;
 };
 
 template<typename TOwner, typename TEvent>
 class EventCallback : public IEventCallback
 {
+private:
 	typedef void (TOwner::*CallbackFunction)(TEvent&);
-
 public:
 	EventCallback(TOwner* ownerInstance, CallbackFunction callbackFunction)
 		: m_ownerInstance(ownerInstance)
@@ -37,13 +37,12 @@ public:
 
 	virtual ~EventCallback() override = default;
 
-protected:
+private:
 	virtual void Call(Event& eventToCall) override
 	{
-		std::invoke(m_callbackFunction, m_ownerInstance,  static_cast<TEvent>(eventToCall));
+		std::invoke(m_callbackFunction, m_ownerInstance,  static_cast<TEvent&>(eventToCall));
 	}
 
-private:
 	TOwner* m_ownerInstance;
 	CallbackFunction m_callbackFunction;
 };
@@ -62,19 +61,24 @@ public:
 	{
 		Logger::Log("EventBus destructor called");
 	}
+	
+	void Reset()
+	{
+		m_subscribers.clear();
+	}
 
 	// should be used in this format
 	// eventBus->SubscribeToEvent<CollisionEvent>(this, &Game::OnCollision);
 	template <typename TEvent, typename TOwner>
 	void SubscribeToEvent(TOwner* ownerInstance, void(TOwner::*callbackFunction)(TEvent&))
 	{
-		if (m_subscribers.at(typeid(TEvent)).get() == nullptr)
+		if (m_subscribers[typeid(TEvent)].get() == nullptr)
 		{
-			m_subscribers.at(typeid(TEvent)) = std::make_unique<HandlerList>());
+			m_subscribers[typeid(TEvent)] = std::make_unique<HandlerList>();
 		}
 
 		auto subscriberToAdd = std::make_unique<EventCallback<TOwner, TEvent>>(ownerInstance, callbackFunction);
-		auto& listOfCallbacksForEventType = m_subscribers.at(typeid(TEvent));
+		auto& listOfCallbacksForEventType = m_subscribers[typeid(TEvent)];
 		
 		listOfCallbacksForEventType->push_back(std::move(subscriberToAdd));
 	}
@@ -82,13 +86,13 @@ public:
 	template <typename TEvent, typename ...TArgs>
 	void EmitEvent(TArgs&& ...args)
 	{
-		auto eventHandlers = m_subscribers.at(typeid(TEvent)).get();
+		auto eventHandlers = m_subscribers[typeid(TEvent)].get();
 		if (eventHandlers != nullptr)
 		{
-			for (auto it = eventHandlers->begin(); eventHandlers->end(); it++)
+			for (auto it = eventHandlers->begin(); it != eventHandlers->end(); it++)
 			{
 				auto eventHandler = it->get();
-				TEvent eventParams(std::forwards<TArgs>(args)...);
+				TEvent eventParams(std::forward<TArgs>(args)...);
 				eventHandler->Execute(eventParams);
 			}
 		}

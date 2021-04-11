@@ -19,11 +19,13 @@
 #include "Systems/AnimationSystem.h"
 #include "Systems/CollisionSystem.h"
 #include "Systems/RenderColliderSystem.h"
+#include "Systems/DamageSystem.h"
 
 Game::Game()
     : m_IsRunning(false)
     , m_assetStore(std::make_unique<AssetStore>())
     , m_registry(std::make_unique<Registry>())
+    , m_eventBus(std::make_unique<EventBus>())
 {
     Logger::Log("game created");
 }
@@ -104,6 +106,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<AnimationSystem>();
     m_registry->AddSystem<CollisionSystem>();
     m_registry->AddSystem<RenderColliderSystem>();
+    m_registry->AddSystem<DamageSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper.png");
@@ -179,13 +182,19 @@ void Game::Update()
 
     double deltaTime = (SDL_GetTicks() - m_millisecondsPreviousFrame) / 1000.0;
     m_millisecondsPreviousFrame = SDL_GetTicks();
-
-    m_registry->GetSystem<MovementSystem>().Update(deltaTime);
-    m_registry->GetSystem<AnimationSystem>().Update();
-    m_registry->GetSystem<CollisionSystem>().Update();
+    
+    // subscription to events will only be alive during one frame
+    // suboptimal, should def be changed
+    m_eventBus->Reset();
+    m_registry->GetSystem<DamageSystem>().SubscribeToEvents(m_eventBus);
 
     // update the registry to add or remove entities that were waiting for the end of the frame
     m_registry->Update();
+
+    m_registry->GetSystem<MovementSystem>().Update(deltaTime);
+    m_registry->GetSystem<AnimationSystem>().Update();
+    m_registry->GetSystem<CollisionSystem>().Update(m_eventBus);
+
 }
 
 void Game::Run()

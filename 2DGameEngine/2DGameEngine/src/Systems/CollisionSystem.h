@@ -5,6 +5,9 @@
 #include "Components/TransformComponent.h"
 #include "Components/BoxColliderComponent.h"
 
+#include "EventBus/EventBus.h"
+#include "Events/CollisionEvent.h"
+
 class CollisionSystem : public System
 {
 public:
@@ -14,7 +17,8 @@ public:
 		RequireComponent<BoxColliderComponent>();
 	}
 
-	void Update()
+	// not a fan of this arg, violates R.34 of guidelines since eventBus is not being reseated
+	void Update(std::unique_ptr<EventBus>& eventBus)
 	{
 		auto systemEntities = GetSystemEntities();
 		for (auto firstEntityIterator = systemEntities.begin(); firstEntityIterator != systemEntities.end(); firstEntityIterator++)
@@ -35,9 +39,10 @@ public:
 					const bool collisionDetected = CheckAABBCollision(firstTransform, firstCollider, secondTransform, secondCollider);
 					if (collisionDetected)
 					{
+						eventBus->EmitEvent<CollisionEvent>(first, second);
 						firstCollider.m_isColliding = true;
 						secondCollider.m_isColliding = true;
-						Logger::Log("colliding");
+						Logger::Log("emitted collision");
 					}
 					else
 					{
