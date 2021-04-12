@@ -20,6 +20,7 @@
 #include "Systems/CollisionSystem.h"
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/DamageSystem.h"
+#include "Systems/KeyboardMovementSystem.h"
 
 Game::Game()
     : m_IsRunning(false)
@@ -88,6 +89,7 @@ void Game::ProcessInput()
             {
                 m_shouldRenderDebug = !m_shouldRenderDebug;
             }
+            m_eventBus->EmitEvent<KeyPressedEvent>(event.key.keysym.sym);
             break;
         }
     }
@@ -107,6 +109,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<CollisionSystem>();
     m_registry->AddSystem<RenderColliderSystem>();
     m_registry->AddSystem<DamageSystem>();
+    m_registry->AddSystem<KeyboardMovementSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper.png");
@@ -187,6 +190,7 @@ void Game::Update()
     // suboptimal, should def be changed
     m_eventBus->Reset();
     m_registry->GetSystem<DamageSystem>().SubscribeToEvents(m_eventBus);
+    m_registry->GetSystem<KeyboardMovementSystem>().SubscribeToEvents(m_eventBus);
 
     // update the registry to add or remove entities that were waiting for the end of the frame
     m_registry->Update();
