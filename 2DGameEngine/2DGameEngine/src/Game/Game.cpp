@@ -13,6 +13,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/BoxColliderComponent.h"
+#include "Components/KeyboardControlledComponent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -20,7 +21,7 @@
 #include "Systems/CollisionSystem.h"
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/DamageSystem.h"
-#include "Systems/KeyboardMovementSystem.h"
+#include "Systems/KeyboardControlSystem.h"
 
 Game::Game()
     : m_IsRunning(false)
@@ -109,10 +110,10 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<CollisionSystem>();
     m_registry->AddSystem<RenderColliderSystem>();
     m_registry->AddSystem<DamageSystem>();
-    m_registry->AddSystem<KeyboardMovementSystem>();
+    m_registry->AddSystem<KeyboardControlSystem>();
 
     // add assets to assetStore
-    m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper.png");
+    m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
     m_assetStore->AddTexture(m_renderer, "radar-image", "./assets/images/radar.png");
     m_assetStore->AddTexture(m_renderer, "tank-image", "./assets/images/tank-panther-right.png");
     m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
@@ -148,10 +149,12 @@ void Game::LoadLevel(Uint8 levelNumber)
     // create entities
     Entity chopper = m_registry->CreateEntity();
     chopper.AddComponent<TransformComponent>(glm::vec2(20, 400), glm::vec2(1, 1), 0);
-    chopper.AddComponent<RigidbodyComponent>(glm::vec2(30, 0));
+    chopper.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 12, true);
-    
+    const auto movementSpeed = 60;
+    chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
+
     Entity radar = m_registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
     radar.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
@@ -190,7 +193,7 @@ void Game::Update()
     // suboptimal, should def be changed
     m_eventBus->Reset();
     m_registry->GetSystem<DamageSystem>().SubscribeToEvents(m_eventBus);
-    m_registry->GetSystem<KeyboardMovementSystem>().SubscribeToEvents(m_eventBus);
+    m_registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(m_eventBus);
 
     // update the registry to add or remove entities that were waiting for the end of the frame
     m_registry->Update();
