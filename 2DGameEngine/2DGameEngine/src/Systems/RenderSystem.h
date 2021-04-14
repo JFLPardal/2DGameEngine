@@ -19,7 +19,7 @@ public:
 		RequireComponent<SpriteComponent>();
 	}
 
-	void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore)
+	void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore, const SDL_Rect& camera)
 	{
 		// sort all the entities by their z-index
 		struct RenderableEntity
@@ -53,8 +53,8 @@ public:
 
 			SDL_Rect dstRect = 
 			{
-				static_cast<int>(transform.m_position.x),
-				static_cast<int>(transform.m_position.y),
+				static_cast<int>(transform.m_position.x - camera.x),
+				static_cast<int>(transform.m_position.y - camera.y),
 				static_cast<int>(sprite.m_width * transform.m_scale.x),
 				static_cast<int>(sprite.m_height * transform.m_scale.y)
 			};

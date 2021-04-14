@@ -14,6 +14,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/BoxColliderComponent.h"
 #include "Components/KeyboardControlledComponent.h"
+#include "Components/CameraFollowComponent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -22,12 +23,19 @@
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/DamageSystem.h"
 #include "Systems/KeyboardControlSystem.h"
+#include "Systems/CameraMovementSystem.h"
+
+int Game::m_windowWidth = 1024;
+int Game::m_windowHeight = 768;
+int Game::m_mapWidth;
+int Game::m_mapHeight;
 
 Game::Game()
     : m_IsRunning(false)
     , m_assetStore(std::make_unique<AssetStore>())
     , m_registry(std::make_unique<Registry>())
     , m_eventBus(std::make_unique<EventBus>())
+    , m_camera(SDL_Rect{0,0, m_windowWidth, m_windowHeight})
 {
     Logger::Log("game created");
 }
@@ -66,6 +74,9 @@ void Game::Initialize()
         Logger::Error("Error creating SDL renderer");
         return;
     }
+
+    // initialize the camera view with the entire screen area
+    m_camera = SDL_Rect{0,0, m_windowWidth, m_windowHeight};
 
     //SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
     m_IsRunning = true;
@@ -111,6 +122,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<RenderColliderSystem>();
     m_registry->AddSystem<DamageSystem>();
     m_registry->AddSystem<KeyboardControlSystem>();
+    m_registry->AddSystem<CameraMovementSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
@@ -146,14 +158,18 @@ void Game::LoadLevel(Uint8 levelNumber)
     }
     mapFile.close();
 
+    m_mapWidth = tileSize * tileScale * mapNumCols;
+    m_mapHeight = tileSize * tileScale * mapNumRows;
+
     // create entities
     Entity chopper = m_registry->CreateEntity();
     chopper.AddComponent<TransformComponent>(glm::vec2(20, 400), glm::vec2(1, 1), 0);
     chopper.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 12, true);
-    const auto movementSpeed = 60;
+    const auto movementSpeed = 200;
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
+    chopper.AddComponent<CameraFollowComponent>();
 
     Entity radar = m_registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
@@ -201,7 +217,7 @@ void Game::Update()
     m_registry->GetSystem<MovementSystem>().Update(deltaTime);
     m_registry->GetSystem<AnimationSystem>().Update();
     m_registry->GetSystem<CollisionSystem>().Update(m_eventBus);
-
+    m_registry->GetSystem<CameraMovementSystem>().Update(m_camera);
 }
 
 void Game::Run()
@@ -220,7 +236,7 @@ void Game::Render()
     SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
 
-    m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore);
+    m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, m_camera);
     if (m_shouldRenderDebug)
     {
         m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer);

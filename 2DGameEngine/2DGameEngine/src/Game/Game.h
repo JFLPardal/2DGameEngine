@@ -29,8 +29,10 @@ public:
 	void Run();
 	void Destroy();
 
-	int m_windowWidth = 1200;
-	int m_windowHeight = 800;
+	static int m_windowWidth;
+	static int m_windowHeight;
+	static int m_mapWidth;
+	static int m_mapHeight;
 private:
 	void ProcessInput();
 	void Update();
@@ -41,6 +43,7 @@ private:
 
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
+	SDL_Rect m_camera;
 
 	std::unique_ptr<Registry> m_registry;
 	std::unique_ptr<AssetStore> m_assetStore;
