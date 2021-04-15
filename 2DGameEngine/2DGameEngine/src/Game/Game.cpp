@@ -153,7 +153,7 @@ void Game::LoadLevel(Uint8 levelNumber)
 
             Entity tile = m_registry->CreateEntity();
             tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0);
-            tile.AddComponent<SpriteComponent>("jungle-tileset", tileSize, tileSize, 0,  tilemapXIndex, tilemapYIndex);
+            tile.AddComponent<SpriteComponent>("jungle-tileset", tileSize, tileSize, 0, false, tilemapXIndex, tilemapYIndex);
         }
     }
     mapFile.close();
@@ -174,7 +174,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     Entity radar = m_registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
     radar.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
-    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 3);
+    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 3, true);
     radar.AddComponent<AnimationComponent>(8, 5, true);
     
     Entity tank = m_registry->CreateEntity();
