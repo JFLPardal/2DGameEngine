@@ -97,7 +97,7 @@ void Game::ProcessInput()
             {
                 m_IsRunning = false;
             }
-            else if (event.key.keysym.sym == SDL_KeyCode::SDLK_d)
+            else if (event.key.keysym.sym == SDL_KeyCode::SDLK_c)
             {
                 m_shouldRenderDebug = !m_shouldRenderDebug;
             }
@@ -179,7 +179,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     
     Entity tank = m_registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(300, 20), glm::vec2(1, 1), 0);
-    tank.AddComponent<RigidbodyComponent>(glm::vec2(0, 55));
+    tank.AddComponent<RigidbodyComponent>(glm::vec2(0, 5));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32);
 
@@ -239,7 +239,7 @@ void Game::Render()
     m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, m_camera);
     if (m_shouldRenderDebug)
     {
-        m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer);
+        m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, m_camera);
     }
 
     SDL_RenderPresent(m_renderer);
