@@ -1,6 +1,11 @@
 #pragma once
 #include <glm/glm.hpp>
 
+/*
+* \param glm::vec2 position = (0,0)
+* \param glm::vec2 scale = (1,1)
+* \param double m_rotation = 0
+*/
 struct TransformComponent
 {
 	glm::vec2 m_position;

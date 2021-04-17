@@ -5,6 +5,15 @@
 
 #include "ECS/ECS.h"
 
+/*
+* \param const std::string& assetId = ""
+	\param unsigned int width = 32
+	\param unsigned int height = 32
+	\param  unsigned int zIndex = 0
+	\param bool isCameraIndependent = false
+	\param Uint8 tilemapXCoord = 0
+	\param Uint8 tilemapYCoord = 0
+*/
 struct SpriteComponent
 {
 	std::string m_assetId;
@@ -16,7 +25,7 @@ struct SpriteComponent
 	SDL_Rect m_textureRect;
 	
 
-	SpriteComponent(const std::string& assetId = "", unsigned int width = 5, unsigned int height = 5, unsigned int zIndex = 0, bool isCameraIndependent = false, Uint8 tilemapXCoord = 0, Uint8 tilemapYCoord = 0)
+	SpriteComponent(const std::string& assetId = "", unsigned int width = 32, unsigned int height = 32, unsigned int zIndex = 0, bool isCameraIndependent = false, Uint8 tilemapXCoord = 0, Uint8 tilemapYCoord = 0)
 		: m_assetId(assetId)
 		, m_width(width)
 		, m_height(height)

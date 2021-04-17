@@ -24,8 +24,8 @@ public:
 	void OnCollision(CollisionEvent& eventParams)
 	{
 		Logger::Log("CollisionEvent between: " + std::to_string(eventParams.m_a.GetId()) + " and " + std::to_string(eventParams.m_b.GetId()));
-		eventParams.m_a.Destroy();
-		eventParams.m_b.Destroy();
+		//eventParams.m_a.Destroy();
+		//eventParams.m_b.Destroy();
 	}
 
 	void Update()
