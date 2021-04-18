@@ -24,6 +24,7 @@ struct ProjectileEmitterComponent
 		: m_velocity(velocity)
 		, m_frequencyInMs(frequencyInMs)
 		, m_projectileLifetimeInMs(projectileLifetimeInMs)
+		, m_damagePercentage(damagePercentage)
 		, m_shouldCollideWithPlayer(shouldCollideWithPlayer)
 		, m_lastEmissionTimeInMs(SDL_GetTicks())
 	{
