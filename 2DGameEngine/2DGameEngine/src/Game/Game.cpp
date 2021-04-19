@@ -16,6 +16,7 @@
 #include "Components/KeyboardControlledComponent.h"
 #include "Components/CameraFollowComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
+#include "Components/HealthComponent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -26,6 +27,7 @@
 #include "Systems/KeyboardControlSystem.h"
 #include "Systems/CameraMovementSystem.h"
 #include "Systems/ProjectileEmitSystem.h"
+#include "Systems/ProjectileLifeCycleSystem.h"
 
 int Game::m_windowWidth = 1024;
 int Game::m_windowHeight = 768;
@@ -126,6 +128,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<KeyboardControlSystem>();
     m_registry->AddSystem<CameraMovementSystem>();
     m_registry->AddSystem<ProjectileEmitSystem>();
+    m_registry->AddSystem<ProjectileLifeCycleSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
@@ -174,6 +177,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     const auto movementSpeed = 200;
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
     chopper.AddComponent<CameraFollowComponent>();
+    chopper.AddComponent<HealthComponent>();
 
     Entity radar = m_registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
@@ -186,14 +190,17 @@ void Game::LoadLevel(Uint8 levelNumber)
     tank.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32);
-    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100, 0), 3000, 10000, 25, false);
+    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100, 0), 3000, 3000, 25, false);
+    tank.AddComponent<HealthComponent>();
 
     Entity truck = m_registry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(300, 200), glm::vec2(1, 1), 0);
     truck.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
     truck.AddComponent<BoxColliderComponent>(32, 32);
-    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 500, 10000, 25, false);
+    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 125, 1500, 25, false);
+    truck.AddComponent<HealthComponent>();
+
 }
 
 void Game::Update()
@@ -224,6 +231,7 @@ void Game::Update()
     m_registry->GetSystem<AnimationSystem>().Update();
     m_registry->GetSystem<CollisionSystem>().Update(m_eventBus);
     m_registry->GetSystem<ProjectileEmitSystem>().Update(m_registry);
+    m_registry->GetSystem<ProjectileLifeCycleSystem>().Update();
     m_registry->GetSystem<CameraMovementSystem>().Update(m_camera);
 }
 

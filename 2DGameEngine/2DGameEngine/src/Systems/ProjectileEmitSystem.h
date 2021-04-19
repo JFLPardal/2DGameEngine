@@ -4,12 +4,12 @@
 
 #include "ECS/ECS.h"
 
+#include "Components/ProjectileComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/RigidbodyComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/BoxColliderComponent.h"
-
 
 class ProjectileEmitSystem : public System
 {
@@ -39,6 +39,8 @@ public:
 					projectileSpawnPosition.x += (transform.m_scale.x *  sprite.m_width * .5f);
 					projectileSpawnPosition.y += (transform.m_scale.y * sprite.m_height * .5f);
 				}
+
+				projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage, projectileEmitter.m_projectileLifetimeInMs);
 				projectile.AddComponent<TransformComponent>(projectileSpawnPosition);
 				projectile.AddComponent<RigidbodyComponent>(projectileEmitter.m_velocity);
 				projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);

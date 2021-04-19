@@ -79,7 +79,7 @@ public:
 	void AddEntity(Entity entityToAdd);
 	void RemoveEntity(Entity entityToRemove);
 
-	const std::vector<Entity>& GetSystemEntities() const;
+	std::vector<Entity>& GetSystemEntities();
 	const Signature& GetComponentSignature() const;
 
 	// what components will be a part of this system's signature?
