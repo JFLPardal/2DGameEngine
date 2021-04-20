@@ -178,6 +178,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
     chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>();
+    chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(500, 500), 0, 10000, 50);
 
     Entity radar = m_registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
@@ -223,6 +224,7 @@ void Game::Update()
     m_eventBus->Reset();
     m_registry->GetSystem<DamageSystem>().SubscribeToEvents(m_eventBus);
     m_registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(m_eventBus);
+    m_registry->GetSystem<ProjectileEmitSystem>().SubscribeToEvents(m_eventBus);
 
     // update the registry to add or remove entities that were waiting for the end of the frame
     m_registry->Update();
