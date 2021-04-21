@@ -7,6 +7,7 @@
 #include <set>
 #include <memory>
 #include <deque>
+#include <unordered_map>
 
 #include "Logger/Logger.h"
 
@@ -42,6 +43,12 @@ public:
 	bool HasComponent() const;
 	template <typename TComponent>
 	TComponent& GetComponent() const;
+
+	void Tag(const std::string& tag);
+	bool HasTag(const std::string& tag) const;
+	void Group(const std::string& group);
+	bool BelongsToGroup(const std::string& group) const;
+
 
 	class Registry* m_registry = nullptr; // forward declaration
 private:
@@ -129,11 +136,11 @@ class Registry
 public:
 	Registry() = default;
 
-	// entity management
+	// ENTITY MANAGEMENT
 	Entity CreateEntity();
 	void DestroyEntity(Entity& entityToDestroy);
 
-	// component management
+	// COMPONENT MANAGEMENT
 	template <typename TComponent, typename ...TArgs>
 	void AddComponent(Entity entity, TArgs&& ...args);
 
@@ -146,7 +153,7 @@ public:
 	template <typename TComponent>
 	TComponent& GetComponent(Entity entity) const;
 
-	// system management
+	// SYSTEM MANAGEMENT
 	template <typename TSystem, typename ...TArgs>
 	void AddSystem(TArgs&& ...args);
 
@@ -162,6 +169,18 @@ public:
 	void AddEntityToSystems(Entity entityToAdd);
 	void RemoveEntityFromSystems(Entity entityToAdd);
 
+	// TAG MANAGEMENT
+	void TagEntity(Entity entity, const std::string& tag);
+	bool EntityHasTag(Entity entity, const std::string& tag) const;
+	Entity GetEntityByTag(const std::string& tag) const;
+	void RemoveEntityTag(Entity entity);
+
+	// GROUP MANAGEMENT
+	void GroupEntity(Entity entity, const std::string& group);
+	bool EntityBelongsToGroup(Entity entity, const std::string& group) const;
+	std::vector<Entity> GetEntitiesByGroup(const std::string& group) const;
+	void RemoveEntityFromGroup(Entity entity);
+
 	void Update();
 
 private:
@@ -176,6 +195,14 @@ private:
 	// of the frame rather than at any random time during the frame
 	std::set<Entity> m_entitiesToAdd;
 	std::set<Entity> m_entitiesToDestroy;
+
+	// entity tags (one tag per entity)
+	std::unordered_map<std::string, Entity> m_entityPerTag;
+	std::unordered_map<std::size_t, std::string> m_tagPerEntity;
+
+	// entity groups (a set of entities per group name)
+	std::unordered_map<std::string, std::set<Entity>> m_entitiesPerGroup;
+	std::unordered_map<std::size_t, std::string> m_groupPerEntity;
 
 	// list of free ids from previously destroyed entitites
 	std::deque<std::size_t> m_freeIds;

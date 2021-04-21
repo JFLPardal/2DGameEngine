@@ -159,6 +159,7 @@ void Game::LoadLevel(Uint8 levelNumber)
             mapFile.ignore();
 
             Entity tile = m_registry->CreateEntity();
+            tile.Tag("tiles");
             tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0);
             tile.AddComponent<SpriteComponent>("jungle-tileset", tileSize, tileSize, 0, false, tilemapXIndex, tilemapYIndex);
         }
@@ -170,6 +171,7 @@ void Game::LoadLevel(Uint8 levelNumber)
 
     // create entities
     Entity chopper = m_registry->CreateEntity();
+    chopper.Tag("player");
     chopper.AddComponent<TransformComponent>(glm::vec2(20, 400), glm::vec2(1, 1), 0);
     chopper.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
@@ -187,6 +189,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     radar.AddComponent<AnimationComponent>(8, 5, true);
     
     Entity tank = m_registry->CreateEntity();
+    tank.Tag("enemies");
     tank.AddComponent<TransformComponent>(glm::vec2(300, 20), glm::vec2(1, 1), 0);
     tank.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
@@ -195,6 +198,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     tank.AddComponent<HealthComponent>();
 
     Entity truck = m_registry->CreateEntity();
+    tank.Tag("enemies");
     truck.AddComponent<TransformComponent>(glm::vec2(300, 200), glm::vec2(1, 1), 0);
     truck.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
