@@ -39,6 +39,7 @@ public:
 				const auto& transform = entity.GetComponent<TransformComponent>();
 				
 				auto projectile = registry->CreateEntity();
+				projectile.Group("projectiles");
 				glm::vec2 projectileSpawnPosition = transform.m_position;
 
 				if (entity.HasComponent<SpriteComponent>())
@@ -48,11 +49,11 @@ public:
 					projectileSpawnPosition.y += (transform.m_scale.y * sprite.m_height * .5f);
 				}
 
-				projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage, projectileEmitter.m_projectileLifetimeInMs);
 				projectile.AddComponent<TransformComponent>(projectileSpawnPosition);
 				projectile.AddComponent<RigidbodyComponent>(projectileEmitter.m_velocity);
 				projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);
 				projectile.AddComponent<BoxColliderComponent>(4, 4);
+				projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage, projectileEmitter.m_projectileLifetimeInMs);
 
 				projectileEmitter.m_lastEmissionTimeInMs = SDL_GetTicks();
 			}
@@ -92,11 +93,12 @@ public:
 					projectileVelocity.y = projectileEmitter.m_velocity.y * facingDirectionY;
 
 					auto projectile = entity.m_registry->CreateEntity();
-					projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage, projectileEmitter.m_projectileLifetimeInMs);
+					projectile.Group("projectiles");
 					projectile.AddComponent<TransformComponent>(projectileSpawnPosition);
 					projectile.AddComponent<RigidbodyComponent>(projectileVelocity);
 					projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);
 					projectile.AddComponent<BoxColliderComponent>(4, 4);
+					projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage, projectileEmitter.m_projectileLifetimeInMs);
 				}
 			}
 		}

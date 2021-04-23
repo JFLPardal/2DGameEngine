@@ -6,6 +6,8 @@
 #include "Events/CollisionEvent.h"
 
 #include "Components/BoxColliderComponent.h"
+#include "Components/ProjectileEmitterComponent.h"
+#include "Components/HealthComponent.h"
 
 class DamageSystem : public System
 {
@@ -23,12 +25,52 @@ public:
 
 	void OnCollision(CollisionEvent& eventParams)
 	{
-		Logger::Log("CollisionEvent between: " + std::to_string(eventParams.m_a.GetId()) + " and " + std::to_string(eventParams.m_b.GetId()));
-		//eventParams.m_a.Destroy();
-		//eventParams.m_b.Destroy();
+		Entity& a = eventParams.m_a;
+		Entity& b = eventParams.m_b;
+		
+		Logger::Log("CollisionEvent between: " + std::to_string(a.GetId()) + " and " + std::to_string(b.GetId()));
+		
+		// projectile and player collisions
+		if (a.BelongsToGroup("projectiles") && b.HasTag("player"))
+		{
+			OnProjectileCollidesPlayer(a, b);
+		}
+		if (b.BelongsToGroup("projectiles") && a.HasTag("player"))
+		{
+			OnProjectileCollidesPlayer(b, a);
+		}
+
+		// projectile and enemies collisions
+		if (b.BelongsToGroup("projectiles") && a.BelongsToGroup("enemies"))
+		{
+			OnProjectileCollidesEnemy(b, a);
+		}
+		if (a.BelongsToGroup("projectiles") && b.BelongsToGroup("enemies"))
+		{
+			OnProjectileCollidesEnemy(a, b);
+		}
 	}
 
-	void Update()
+private:
+	void OnProjectileCollidesPlayer(Entity& projectile, Entity& player)
+	{
+		const auto& projectileComponent = projectile.GetComponent<ProjectileEmitterComponent>();
+		
+		if (projectileComponent.m_shouldCollideWithPlayer)
+		{
+			auto& playerHealth = player.GetComponent<HealthComponent>();
+			playerHealth.m_currentHealthPertcentage -= projectileComponent.m_damagePercentage;
+
+			if (playerHealth.m_currentHealthPertcentage <= 0)
+			{
+				player.Destroy();
+			}
+
+			projectile.Destroy();
+		}
+	}
+
+	void OnProjectileCollidesEnemy(Entity& projectile, Entity& enemy)
 	{
 
 	}
