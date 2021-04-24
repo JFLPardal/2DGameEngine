@@ -199,7 +199,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     tank.AddComponent<HealthComponent>();
 
     Entity truck = m_registry->CreateEntity();
-    tank.Group("enemies");
+    truck.Group("enemies");
     truck.AddComponent<TransformComponent>(glm::vec2(300, 200), glm::vec2(1, 1), 0);
     truck.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);

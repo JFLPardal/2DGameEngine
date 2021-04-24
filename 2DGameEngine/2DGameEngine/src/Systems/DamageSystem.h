@@ -29,7 +29,7 @@ public:
 		Entity& a = eventParams.m_a;
 		Entity& b = eventParams.m_b;
 		
-		Logger::Log("CollisionEvent between: " + std::to_string(a.GetId()) + " and " + std::to_string(b.GetId()));
+		//Logger::Log("CollisionEvent between: " + std::to_string(a.GetId()) + " and " + std::to_string(b.GetId()));
 		
 		// projectile and player collisions
 		if (a.BelongsToGroup("projectiles") && b.HasTag("player"))
@@ -73,6 +73,19 @@ private:
 
 	void OnProjectileCollidesEnemy(Entity& projectile, Entity& enemy)
 	{
+		const auto& projectileComponent = projectile.GetComponent<ProjectileComponent>();
 
+		if (!projectileComponent.m_shouldCollideWithPlayer)
+		{
+			auto& enemyHealth = enemy.GetComponent<HealthComponent>();
+			enemyHealth.m_currentHealthPertcentage -= projectileComponent.m_damagePercentage;
+
+			if (enemyHealth.m_currentHealthPertcentage <= 0)
+			{
+				enemy.Destroy();
+			}
+
+			projectile.Destroy();
+		}
 	}
 };

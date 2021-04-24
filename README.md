@@ -12,3 +12,5 @@ Simple 2D game engine that uses SDL, GLM, Dear ImGUI and Lua, based on an online
 - [ ] Data structures used for Tags and Groups  - to ensure fast access when using a tag to get an entity id and using an entity to get a tag, we have 2 data structures that  contain the same data but with different representations. This is not a problem per se, but the data structures used are not efficient (at least some of them). This same problem occurs for groups.     
 
 - [ ] Use pre compiled headers - compilation is getting slower than it needs to be and the more that is added to the engine the worse it's going to get (and harder it will be to implement this) 
+
+- [ ] Data validation - some data is assumed to exist and there is no code to protect the program if that data is not present. Some examples are - an invalid filepath for a texture, checking if an entity has a given tag when that tag does not exist and places where we are using pointers that are not all being null verified

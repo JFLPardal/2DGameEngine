@@ -42,7 +42,7 @@ public:
 						eventBus->EmitEvent<CollisionEvent>(first, second);
 						firstCollider.m_isColliding = true;
 						secondCollider.m_isColliding = true;
-						Logger::Log("emitted collision");
+						//Logger::Log("emitted collision");
 					}
 					else
 					{
