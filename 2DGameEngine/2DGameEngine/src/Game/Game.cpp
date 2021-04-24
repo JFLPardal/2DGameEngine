@@ -147,7 +147,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     std::fstream mapFile;
     mapFile.open("./assets/tilemaps/jungle.map");
 
-   /* for (int y = 0; y < mapNumRows; y++)
+    for (int y = 0; y < mapNumRows; y++)
     {
         for(int x = 0; x < mapNumCols; x++)
         {
@@ -167,7 +167,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     mapFile.close();
 
     m_mapWidth = tileSize * tileScale * mapNumCols;
-    m_mapHeight = tileSize * tileScale * mapNumRows;*/
+    m_mapHeight = tileSize * tileScale * mapNumRows;
 
     // create entities
     Entity chopper = m_registry->CreateEntity();
@@ -181,7 +181,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
     chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>(100);
-    //chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(500, 500), 0, 10000, 50);
+    chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(500, 500), 0, 10000, 50);
 
     Entity radar = m_registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
@@ -195,7 +195,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     tank.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32);
-    //tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100, 0), 3000, 3000, 25, false);
+    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100, 0), 300, 6000, 25, true);
     tank.AddComponent<HealthComponent>();
 
     Entity truck = m_registry->CreateEntity();
@@ -204,7 +204,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     truck.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
     truck.AddComponent<BoxColliderComponent>(32, 32);
-    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 3000, 1500, 25, false);
+    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 3000, 1500, 25, true);
     truck.AddComponent<HealthComponent>();
 
 }

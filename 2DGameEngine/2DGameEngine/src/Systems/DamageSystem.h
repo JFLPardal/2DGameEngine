@@ -8,6 +8,7 @@
 #include "Components/BoxColliderComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/HealthComponent.h"
+#include "Components/ProjectileComponent.h"
 
 class DamageSystem : public System
 {
@@ -54,7 +55,7 @@ public:
 private:
 	void OnProjectileCollidesPlayer(Entity& projectile, Entity& player)
 	{
-		const auto& projectileComponent = projectile.GetComponent<ProjectileEmitterComponent>();
+		const auto& projectileComponent = projectile.GetComponent<ProjectileComponent>();
 		
 		if (projectileComponent.m_shouldCollideWithPlayer)
 		{
