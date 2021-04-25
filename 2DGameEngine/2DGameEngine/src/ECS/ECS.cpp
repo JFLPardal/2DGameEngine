@@ -236,7 +236,16 @@ void Registry::Update()
 	for (auto& entity : m_entitiesToDestroy)
 	{
 		RemoveEntityFromSystems(entity);
+
 		m_entityComponentSignatures.at(entity.GetId()).reset();
+
+		// remove the entity from the component pools
+		for (auto& pool : m_componentPools)
+		{
+			pool->RemoveEntityFromPool(entity.GetId());
+		}
+
+		// make the entity id available to be reused
 		m_freeIds.push_back(entity.GetId());
 
 		RemoveEntityTag(entity);

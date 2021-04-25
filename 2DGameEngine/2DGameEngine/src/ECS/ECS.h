@@ -8,6 +8,7 @@
 #include <memory>
 #include <deque>
 #include <unordered_map>
+#include <iostream>
 
 #include "Logger/Logger.h"
 
@@ -101,7 +102,8 @@ private:
 class IPool
 {
 public:
-	virtual ~IPool() {};
+	virtual ~IPool() = default;
+	virtual void RemoveEntityFromPool(std::size_t entityId) = 0;
 };
 
 // wrapper around a vector
@@ -109,24 +111,87 @@ template <typename T>
 class Pool : public IPool
 {
 public:
-	Pool(std::size_t size = 100)
+	Pool(std::size_t capacity = 100)
+		: m_size(0)
 	{
-		m_data.resize(size);
+		m_data.resize(capacity);
 	}
 	
 	virtual ~Pool() = default;
 
-	bool IsEmpty() const { return m_data.empty(); }
-	std::size_t GetSize() const { return m_data.size(); }
+	bool IsEmpty() const { return m_size == 0; }
+	std::size_t GetSize() const { return m_size; }
 	void Resize(std::size_t size) { m_data.resize(size); }
-	void Clear() { m_data.clear(); }
+	void Clear() 
+	{
+		m_data.clear();  
+		m_size = 0;
+	}
 
 	void Add(T objectToAdd) { m_data.push_back(objectToAdd); }
-	void Set(std::size_t indexToSet, T objectToSet) { m_data.at(indexToSet) = objectToSet; }
-	T& Get(std::size_t indexToGet) { return static_cast<T&>(m_data.at(indexToGet)); }
+
+	void Set(std::size_t entityId, T objectToSet)
+	{
+		const bool entityAlreadyExists = m_entityIdToIndex.find(entityId) != m_entityIdToIndex.end();
+		if (entityAlreadyExists)
+		{
+			int index = m_entityIdToIndex[entityId];
+			m_data[index] = objectToSet;
+		}
+		else
+		{
+			int index = m_size;
+			m_entityIdToIndex.emplace(entityId, index);
+			m_indexToEntityId.emplace(index, entityId);
+			if (index >= m_data.capacity())
+			{
+				m_data.resize(m_size * 2);
+			}
+			m_data.at(index) = objectToSet;
+			m_size++;
+		}
+	}
+
+	void RemoveEntityFromPool(std::size_t entityId) override
+	{
+		if (m_entityIdToIndex.find(entityId) != m_entityIdToIndex.end())
+		{
+			Remove(entityId);
+		}
+	}
+
+	void Remove(std::size_t entityId)
+	{
+		// swap last element with the element to be removed in the vector
+		std::size_t indexOfRemoved = m_entityIdToIndex.at(entityId);
+		std::size_t indexOfLast = m_size - 1;
+		m_data[indexOfRemoved] = m_data[indexOfLast];
+
+		//  swap last element with the element to be removed on the maps
+		int entityIdOfLastElement = m_indexToEntityId[indexOfLast];
+		m_entityIdToIndex[entityIdOfLastElement] = indexOfRemoved;
+		m_indexToEntityId[indexOfRemoved] = entityIdOfLastElement;
+
+		m_entityIdToIndex.erase(entityId);
+		m_indexToEntityId.erase(indexOfLast);
+
+		m_size--;
+	}
+
+	T& Get(std::size_t entityId) 
+	{ 
+		auto index = m_entityIdToIndex.at(entityId);
+		return static_cast<T&>(m_data.at(index));
+	}
+
 	T& operator[](std::size_t indexToGet) { return m_data.at(indexToGet); }
 private:
 	std::vector<T> m_data;
+	std::size_t m_size;
+
+	// helper maps to keep track of entity ids per m_data index so that it does not have gaps
+	std::unordered_map<int, int> m_entityIdToIndex;
+	std::unordered_map<int, int> m_indexToEntityId;
 };
 
 // manages creation and destruction of entities, add systems,
@@ -277,11 +342,6 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args)
 
 	std::shared_ptr<Pool<TComponent>> componentToAddPool = std::static_pointer_cast<Pool<TComponent>>(m_componentPools.at(componentId));
 	// check if the pool is sized large enough to fit the new component
-	const bool needsToAddComponentToPool = m_numEntities >= componentToAddPool->GetSize();
-	if (needsToAddComponentToPool)
-	{
-		componentToAddPool->Resize(m_numEntities);
-	}
 
 	TComponent componentToAdd(std::forward<TArgs>(args)...);
 	componentToAddPool->Set(entityId, componentToAdd);
@@ -290,6 +350,8 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args)
 	m_entityComponentSignatures.at(entityId).set(componentId);
 
 	//Logger::Log("Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId));
+
+	std::cout << "COMPONENT ID= " << componentId << " --> POOL SIZE: " << componentToAddPool->GetSize() << std::endl;
 }
 
 template<typename TComponent>
@@ -297,6 +359,9 @@ void Registry::RemoveComponent(Entity entity)
 {
 	const auto componentId = Component<TComponent>::GetId();
 	const auto entityId = entity.GetId();
+	
+	std::shared_ptr<Pool<TComponent>> componentToAddPool = std::static_pointer_cast<Pool<TComponent>>(m_componentPools.at(componentId));
+	componentToAddPool->Remove(entityId);
 	
 	m_entityComponentSignatures.at(entityId).set(componentId, false);
 
