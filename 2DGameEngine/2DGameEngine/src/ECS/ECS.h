@@ -8,7 +8,6 @@
 #include <memory>
 #include <deque>
 #include <unordered_map>
-#include <iostream>
 
 #include "Logger/Logger.h"
 
@@ -350,8 +349,6 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args)
 	m_entityComponentSignatures.at(entityId).set(componentId);
 
 	//Logger::Log("Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId));
-
-	std::cout << "COMPONENT ID= " << componentId << " --> POOL SIZE: " << componentToAddPool->GetSize() << std::endl;
 }
 
 template<typename TComponent>
