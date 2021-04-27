@@ -53,8 +53,8 @@ public:
 
 			SDL_Rect dstRect = 
 			{
-				static_cast<int>(transform.m_position.x - (sprite.m_isCameraIndependent ? 0 : camera.x)),
-				static_cast<int>(transform.m_position.y - (sprite.m_isCameraIndependent ? 0 : camera.y)),
+				static_cast<int>(transform.m_position.x - (sprite.m_isInCameraSpace ? 0 : camera.x)),
+				static_cast<int>(transform.m_position.y - (sprite.m_isInCameraSpace ? 0 : camera.y)),
 				static_cast<int>(sprite.m_width * transform.m_scale.x),
 				static_cast<int>(sprite.m_height * transform.m_scale.y)
 			};

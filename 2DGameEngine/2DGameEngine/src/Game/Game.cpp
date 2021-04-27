@@ -4,6 +4,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <glm/glm.hpp>
 
 #include "Logger/Logger.h"
@@ -17,6 +18,7 @@
 #include "Components/CameraFollowComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/HealthComponent.h"
+#include "Components/TextLabelComponent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -28,6 +30,7 @@
 #include "Systems/CameraMovementSystem.h"
 #include "Systems/ProjectileEmitSystem.h"
 #include "Systems/ProjectileLifeCycleSystem.h"
+#include "Systems/RenderTextSystem.h"
 
 int Game::m_windowWidth = 1024;
 int Game::m_windowHeight = 768;
@@ -47,13 +50,19 @@ Game::Game()
 void Game::Initialize()
 {
     // init SDL
-    bool errorInitializingSDL = SDL_Init(SDL_INIT_EVERYTHING) != 0;
+    const bool errorInitializingSDL = SDL_Init(SDL_INIT_EVERYTHING) != 0;
     if (errorInitializingSDL)
     {
         Logger::Error("Error initializing SDL" );
         return;
     }
 
+    const bool errorInitializingSDL_TTF = TTF_Init() != 0;
+    if (errorInitializingSDL_TTF)
+    {
+        Logger::Error("Error initializing SDL TTF");
+        return;
+    }
     // init window
     // setting the w and h here before using SDL_SetWindowFullscreen()
     // will set the resolution of the window
@@ -129,6 +138,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<CameraMovementSystem>();
     m_registry->AddSystem<ProjectileEmitSystem>();
     m_registry->AddSystem<ProjectileLifeCycleSystem>();
+    m_registry->AddSystem<RenderTextSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
@@ -137,6 +147,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
     m_assetStore->AddTexture(m_renderer, "jungle-tileset", "./assets/tilemaps/jungle.png");
     m_assetStore->AddTexture(m_renderer, "bullet-image", "./assets/images/bullet.png");
+    m_assetStore->AddFont("charriot-font", "./assets/fonts/charriot.ttf", 20);
 
     // load tilemap
     const Uint8 tileSize = 32;
@@ -207,6 +218,10 @@ void Game::LoadLevel(Uint8 levelNumber)
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 3000, 1500, 25, true);
     truck.AddComponent<HealthComponent>();
 
+    Entity textLabel = m_registry->CreateEntity();
+    SDL_Color lightGrey = { 200, 200, 200, 255 };
+    textLabel.AddComponent<TextLabelComponent>(glm::vec2(m_windowWidth * .5f - 100 ,20), "GAME ENGINE SHOWCASE", "charriot-font", lightGrey, true);
+
 }
 
 void Game::Update()
@@ -259,6 +274,7 @@ void Game::Render()
     SDL_RenderClear(m_renderer);
 
     m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, m_camera);
+    m_registry->GetSystem<RenderTextSystem>().Update(m_assetStore, m_renderer, m_camera);
     if (m_shouldRenderDebug)
     {
         m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, m_camera);
