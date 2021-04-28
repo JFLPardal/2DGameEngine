@@ -31,6 +31,7 @@
 #include "Systems/ProjectileEmitSystem.h"
 #include "Systems/ProjectileLifeCycleSystem.h"
 #include "Systems/RenderTextSystem.h"
+#include "Systems/RenderHealthBarSystem.h"
 
 int Game::m_windowWidth = 1024;
 int Game::m_windowHeight = 768;
@@ -139,6 +140,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<ProjectileEmitSystem>();
     m_registry->AddSystem<ProjectileLifeCycleSystem>();
     m_registry->AddSystem<RenderTextSystem>();
+    m_registry->AddSystem<RenderHealthBarSystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
@@ -147,7 +149,9 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
     m_assetStore->AddTexture(m_renderer, "jungle-tileset", "./assets/tilemaps/jungle.png");
     m_assetStore->AddTexture(m_renderer, "bullet-image", "./assets/images/bullet.png");
-    m_assetStore->AddFont("charriot-font", "./assets/fonts/charriot.ttf", 20);
+    m_assetStore->AddFont(CONST::FONT::charriot_20, "./assets/fonts/charriot.ttf", 20);
+    m_assetStore->AddFont(CONST::FONT::pico_8, "./assets/fonts/pico8.ttf", 8);
+    m_assetStore->AddFont(CONST::FONT::pico_10, "./assets/fonts/pico8.ttf", 10);
 
     // load tilemap
     const Uint8 tileSize = 32;
@@ -188,11 +192,12 @@ void Game::LoadLevel(Uint8 levelNumber)
     chopper.AddComponent<BoxColliderComponent>(32, 32);
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 12, true);
-    const auto movementSpeed = 200;
+    const auto movementSpeed = 100;
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
     chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>(100);
-    chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(500, 500), 0, 10000, 50);
+    chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(500, 500), 0, 10000, 10);
+    chopper.AddComponent<TextLabelComponent>(glm::vec2(0,-25), "100%", CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
 
     Entity radar = m_registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
@@ -208,19 +213,21 @@ void Game::LoadLevel(Uint8 levelNumber)
     tank.AddComponent<BoxColliderComponent>(32, 32);
     tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100, 0), 300, 6000, 25, true);
     tank.AddComponent<HealthComponent>();
+    tank.AddComponent<TextLabelComponent>(glm::vec2(0, -25), "100%", CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
 
     Entity truck = m_registry->CreateEntity();
     truck.Group("enemies");
-    truck.AddComponent<TransformComponent>(glm::vec2(300, 200), glm::vec2(1, 1), 0);
+    truck.AddComponent<TransformComponent>(glm::vec2(200, 200), glm::vec2(1, 1), 0);
     truck.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
     truck.AddComponent<BoxColliderComponent>(32, 32);
-    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 3000, 1500, 25, true);
+    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 3000, 15000, 25, true);
     truck.AddComponent<HealthComponent>();
+    truck.AddComponent<TextLabelComponent>(glm::vec2(0, -25), "100%", CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
 
     Entity textLabel = m_registry->CreateEntity();
     SDL_Color lightGrey = { 200, 200, 200, 255 };
-    textLabel.AddComponent<TextLabelComponent>(glm::vec2(m_windowWidth * .5f - 100 ,20), "GAME ENGINE SHOWCASE", "charriot-font", lightGrey, true);
+    textLabel.AddComponent<TextLabelComponent>(glm::vec2(m_windowWidth * .5f - 100 ,20), "GAME ENGINE SHOWCASE", CONST::FONT::charriot_20, lightGrey, true);
 
 }
 
@@ -275,6 +282,7 @@ void Game::Render()
 
     m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, m_camera);
     m_registry->GetSystem<RenderTextSystem>().Update(m_assetStore, m_renderer, m_camera);
+    m_registry->GetSystem<RenderHealthBarSystem>().Update(m_renderer, m_assetStore, m_camera);
     if (m_shouldRenderDebug)
     {
         m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, m_camera);

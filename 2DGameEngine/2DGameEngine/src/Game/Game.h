@@ -14,6 +14,18 @@ namespace CONST
 		constexpr int FPS = 120;
 		constexpr int MILLISECS_PER_FRAME = 1000 / CONST::FRAMERATE::FPS;
 	}
+	namespace FONT
+	{
+		constexpr auto charriot_20 = "charriot-font";
+		constexpr auto pico_8 = "pico-font";
+		constexpr auto pico_10 = "pico-font";
+	}
+	namespace COLORS
+	{
+		constexpr SDL_Color lightGrey{ 200, 200, 200, 255 };
+		constexpr SDL_Color orange{ 255, 165, 0, 255 };
+		constexpr SDL_Color red{ 180, 0, 0, 255 };
+	}
 }
 
 struct SDL_Window;
