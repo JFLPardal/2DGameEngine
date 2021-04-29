@@ -6,6 +6,9 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <glm/glm.hpp>
+#include <imgui/imgui.h>
+#include <imgui/imgui_sdl.h>
+#include <imgui/imgui_impl_sdl.h>
 
 #include "Logger/Logger.h"
 
@@ -33,8 +36,8 @@
 #include "Systems/RenderTextSystem.h"
 #include "Systems/RenderHealthBarSystem.h"
 
-int Game::m_windowWidth = 1024;
-int Game::m_windowHeight = 768;
+int Game::m_windowWidth = 1680;
+int Game::m_windowHeight = 1050;
 int Game::m_mapWidth;
 int Game::m_mapHeight;
 
@@ -89,6 +92,10 @@ void Game::Initialize()
         return;
     }
 
+    // initialize Imgui
+    ImGui::CreateContext();
+    ImGuiSDL::Initialize(m_renderer, m_windowWidth, m_windowHeight);
+
     // initialize the camera view with the entire screen area
     m_camera = SDL_Rect{0,0, m_windowWidth, m_windowHeight};
 
@@ -98,24 +105,36 @@ void Game::Initialize()
 
 void Game::ProcessInput()
 {
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
+    SDL_Event sdlEvent;
+    while (SDL_PollEvent(&sdlEvent))
     {
-        switch (event.type)
+        // imgui sdl input
+        ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+        ImGuiIO& io = ImGui::GetIO();
+        {
+            // imgui mouse needs
+            int mouseX, mouseY;
+            const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
+            io.MousePos = ImVec2(mouseX, mouseY);
+            io.MouseDown[0] = buttons & SDL_BUTTON(SDL_BUTTON_LEFT);
+            io.MouseDown[1] = buttons & SDL_BUTTON(SDL_BUTTON_RIGHT);
+        }
+
+        switch (sdlEvent.type)
         {
         case SDL_QUIT:
             m_IsRunning = false;
             break;
         case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_ESCAPE)
+            if (sdlEvent.key.keysym.sym == SDLK_ESCAPE)
             {
                 m_IsRunning = false;
             }
-            else if (event.key.keysym.sym == SDL_KeyCode::SDLK_c)
+            else if (sdlEvent.key.keysym.sym == SDL_KeyCode::SDLK_c)
             {
                 m_shouldRenderDebug = !m_shouldRenderDebug;
             }
-            m_eventBus->EmitEvent<KeyPressedEvent>(event.key.keysym.sym);
+            m_eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
             break;
         }
     }
@@ -286,6 +305,11 @@ void Game::Render()
     if (m_shouldRenderDebug)
     {
         m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, m_camera);
+        
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+        ImGui::Render();
+        ImGuiSDL::Render(ImGui::GetDrawData());
     }
 
     SDL_RenderPresent(m_renderer);
@@ -293,6 +317,8 @@ void Game::Render()
 
 void Game::Destroy()
 {
+    ImGuiSDL::Deinitialize();
+    ImGui::DestroyContext();
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
