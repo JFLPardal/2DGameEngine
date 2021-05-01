@@ -35,6 +35,7 @@
 #include "Systems/ProjectileLifeCycleSystem.h"
 #include "Systems/RenderTextSystem.h"
 #include "Systems/RenderHealthBarSystem.h"
+#include "Systems/RenderGUISystem.h"
 
 int Game::m_windowWidth = 1680;
 int Game::m_windowHeight = 1050;
@@ -160,6 +161,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<ProjectileLifeCycleSystem>();
     m_registry->AddSystem<RenderTextSystem>();
     m_registry->AddSystem<RenderHealthBarSystem>();
+    m_registry->AddSystem<RenderGUISystem>();
 
     // add assets to assetStore
     m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
@@ -305,11 +307,7 @@ void Game::Render()
     if (m_shouldRenderDebug)
     {
         m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, m_camera);
-        
-        ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
-        ImGui::Render();
-        ImGuiSDL::Render(ImGui::GetDrawData());
+        m_registry->GetSystem<RenderGUISystem>().Update();
     }
 
     SDL_RenderPresent(m_renderer);
