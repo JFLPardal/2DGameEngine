@@ -131,7 +131,7 @@ void Game::ProcessInput()
             {
                 m_IsRunning = false;
             }
-            else if (sdlEvent.key.keysym.sym == SDL_KeyCode::SDLK_c)
+            else if (sdlEvent.key.keysym.sym == SDL_KeyCode::SDLK_QUOTE)
             {
                 m_shouldRenderDebug = !m_shouldRenderDebug;
             }
@@ -307,7 +307,7 @@ void Game::Render()
     if (m_shouldRenderDebug)
     {
         m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, m_camera);
-        m_registry->GetSystem<RenderGUISystem>().Update();
+        m_registry->GetSystem<RenderGUISystem>().Update(m_registry, m_assetStore, m_camera);
     }
 
     SDL_RenderPresent(m_renderer);
