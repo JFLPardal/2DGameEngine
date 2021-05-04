@@ -1,11 +1,12 @@
 #pragma once
 
-//#include "ECS/ECS.h"
 #include "Game/Game.h"
+
+#include "Events/CollisionEvent.h"
 
 #include "Components/TransformComponent.h"
 #include "Components/RigidbodyComponent.h"
-
+#include "Components/SpriteComponent.h"
 
 class MovementSystem : public System
 {
@@ -14,6 +15,47 @@ public:
 	{
 		RequireComponent<TransformComponent>();
 		RequireComponent<RigidbodyComponent>();
+	}
+
+	void SubscribeToEvents(const std::unique_ptr<EventBus>& eventBus)
+	{
+		eventBus->SubscribeToEvent<CollisionEvent>(this, &MovementSystem::OnCollision);
+	}
+
+	void OnCollision(CollisionEvent& eventParams)
+	{
+		Entity& a = eventParams.m_a;
+		Entity& b = eventParams.m_b;
+
+		// enemy and obstacle collision
+		if (a.BelongsToGroup("enemies") && b.BelongsToGroup("obstacles"))
+		{
+			OnEnemyCollidesObstacle(a, b);
+		}
+		if (b.BelongsToGroup("enemies") && a.BelongsToGroup("obstacles"))
+		{
+			OnEnemyCollidesObstacle(b, a);
+		}
+	}
+
+	void OnEnemyCollidesObstacle(Entity& enemy, Entity& obstacle)
+	{
+		if (enemy.HasComponent<RigidbodyComponent>() && enemy.HasComponent<SpriteComponent>())
+		{
+			auto& rigidbody = enemy.GetComponent<RigidbodyComponent>();
+			auto& sprite = enemy.GetComponent<SpriteComponent>();
+
+			if (rigidbody.m_velocity.x != 0)
+			{
+				rigidbody.m_velocity.x *= -1;
+				sprite.m_flip = (sprite.m_flip == SDL_FLIP_NONE) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+			}
+			if (rigidbody.m_velocity.y != 0)
+			{
+				rigidbody.m_velocity.y *= -1; 
+				sprite.m_flip = (sprite.m_flip == SDL_FLIP_NONE) ? SDL_FLIP_VERTICAL : SDL_FLIP_NONE;
+			}
+		}
 	}
 
 	void Update(double deltaTime)

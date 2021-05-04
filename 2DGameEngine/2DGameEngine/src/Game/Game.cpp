@@ -170,6 +170,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
     m_assetStore->AddTexture(m_renderer, "jungle-tileset", "./assets/tilemaps/jungle.png");
     m_assetStore->AddTexture(m_renderer, "bullet-image", "./assets/images/bullet.png");
+    m_assetStore->AddTexture(m_renderer, "tree-image", "./assets/images/tree.png");
     m_assetStore->AddFont(CONST::FONT::charriot_20, "./assets/fonts/charriot.ttf", 20);
     m_assetStore->AddFont(CONST::FONT::pico_8, "./assets/fonts/pico8.ttf", 8);
     m_assetStore->AddFont(CONST::FONT::pico_10, "./assets/fonts/pico8.ttf", 10);
@@ -238,13 +239,25 @@ void Game::LoadLevel(Uint8 levelNumber)
 
     Entity truck = m_registry->CreateEntity();
     truck.Group("enemies");
-    truck.AddComponent<TransformComponent>(glm::vec2(200, 200), glm::vec2(1, 1), 0);
-    truck.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
+    truck.AddComponent<TransformComponent>(glm::vec2(200, 500), glm::vec2(1, 1), 0);
+    truck.AddComponent<RigidbodyComponent>(glm::vec2(30, 0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
     truck.AddComponent<BoxColliderComponent>(32, 32);
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 3000, 15000, 25, true);
     truck.AddComponent<HealthComponent>();
     truck.AddComponent<TextLabelComponent>(glm::vec2(0, -25), "100%", CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
+
+    Entity tree01 = m_registry->CreateEntity();
+    tree01.Group("obstacles");
+    tree01.AddComponent<TransformComponent>(glm::vec2(300, 485));
+    tree01.AddComponent<SpriteComponent>("tree-image", 16, 32, 2);
+    tree01.AddComponent<BoxColliderComponent>(16, 32);
+    
+    Entity tree02 = m_registry->CreateEntity();
+    tree02.Group("obstacles");
+    tree02.AddComponent<TransformComponent>(glm::vec2(150, 485));
+    tree02.AddComponent<SpriteComponent>("tree-image", 16, 32, 2);
+    tree02.AddComponent<BoxColliderComponent>(16, 32);
 
     Entity textLabel = m_registry->CreateEntity();
     SDL_Color lightGrey = { 200, 200, 200, 255 };
@@ -270,6 +283,7 @@ void Game::Update()
     // subscription to events will only be alive during one frame
     // suboptimal, should def be changed
     m_eventBus->Reset();
+    m_registry->GetSystem<MovementSystem>().SubscribeToEvents(m_eventBus);
     m_registry->GetSystem<DamageSystem>().SubscribeToEvents(m_eventBus);
     m_registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(m_eventBus);
     m_registry->GetSystem<ProjectileEmitSystem>().SubscribeToEvents(m_eventBus);

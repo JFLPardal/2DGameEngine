@@ -20,6 +20,7 @@ struct SpriteComponent
 	unsigned int m_width;
 	unsigned int m_height;
 	unsigned int m_zIndex;
+	SDL_RendererFlip m_flip;
 	bool m_isInCameraSpace;
 	// this rect allows the texture to come from a tilemaps 
 	SDL_Rect m_textureRect;
@@ -30,6 +31,7 @@ struct SpriteComponent
 		, m_width(width)
 		, m_height(height)
 		, m_zIndex(zIndex)
+		, m_flip(SDL_FLIP_NONE)
 		, m_isInCameraSpace(isCameraIndependent)
 		, m_textureRect(SDL_Rect{
 			static_cast<int>(tilemapXCoord), 
