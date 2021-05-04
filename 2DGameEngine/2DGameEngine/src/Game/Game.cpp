@@ -39,8 +39,8 @@
 
 int Game::m_windowWidth = 1680;
 int Game::m_windowHeight = 1050;
-int Game::m_mapWidth;
-int Game::m_mapHeight;
+int Game::m_mapWidth = 0;
+int Game::m_mapHeight = 0;
 
 Game::Game()
     : m_IsRunning(false)

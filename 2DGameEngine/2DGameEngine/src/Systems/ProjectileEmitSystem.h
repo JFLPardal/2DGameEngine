@@ -39,7 +39,6 @@ public:
 				const auto& transform = entity.GetComponent<TransformComponent>();
 				
 				auto projectile = registry->CreateEntity();
-				Logger::Error("Projectile created with id: " + std::to_string(projectile.GetId()) );
 				projectile.Group("projectiles");
 				glm::vec2 projectileSpawnPosition = transform.m_position;
 
