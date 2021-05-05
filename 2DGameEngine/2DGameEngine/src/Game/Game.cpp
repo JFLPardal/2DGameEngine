@@ -2,7 +2,6 @@
 
 #include <fstream>
 
-#include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <glm/glm.hpp>
@@ -214,7 +213,7 @@ void Game::LoadLevel(Uint8 levelNumber)
     chopper.AddComponent<BoxColliderComponent>(32, 32);
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 12, true);
-    const auto movementSpeed = 100;
+    const auto movementSpeed = 300;
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
     chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>(100);

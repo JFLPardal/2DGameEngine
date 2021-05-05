@@ -68,6 +68,20 @@ public:
 			transform.m_position.x += (rigidbody.m_velocity.x * deltaTime);
 			transform.m_position.y += (rigidbody.m_velocity.y * deltaTime);
 
+			const bool isPlayer = entity.HasTag("player");
+			if (isPlayer)
+			{
+				int paddingLeft = 10;
+				int paddingTop = 10;
+				int paddingRight = 50; // 'pivot' of an entity is top left corner
+				int paddingBottom = 50;
+
+				transform.m_position.x = transform.m_position.x < paddingLeft ? paddingLeft : transform.m_position.x;
+				transform.m_position.x = transform.m_position.x > Game::m_mapWidth - paddingRight ? Game::m_mapWidth - paddingRight : transform.m_position.x;
+				transform.m_position.y = transform.m_position.y < paddingTop ? paddingTop : transform.m_position.y;
+				transform.m_position.y = transform.m_position.y > Game::m_mapHeight - paddingBottom ? Game::m_mapHeight - paddingBottom : transform.m_position.y;
+			}
+
 			// 'ensure' an entity is only destroyed when it is no longer visible
 			const int margin = 100;
 
@@ -77,7 +91,6 @@ public:
 				transform.m_position.y > Game::m_mapHeight + margin ||
 				transform.m_position.y < 0 - margin;
 
-			const bool isPlayer = entity.HasTag("player");
 			if (isOutOfMap && !isPlayer)
 			{
 				entity.Destroy();
