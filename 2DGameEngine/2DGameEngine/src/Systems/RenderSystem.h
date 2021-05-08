@@ -34,6 +34,18 @@ public:
 			RenderableEntity renderableEntity;
 			renderableEntity.spriteComponent = entity.GetComponent<SpriteComponent>();
 			renderableEntity.transformComponent = entity.GetComponent<TransformComponent>();
+			
+			// we only want to render entities that the camera sees
+			const auto& transform = renderableEntity.transformComponent;
+			const auto& sprite = renderableEntity.spriteComponent;
+			const bool isEntityOutsideCameraView =
+				transform.m_position.x + transform.m_scale.x * sprite.m_width < camera.x || 
+				transform.m_position.x > camera.x + camera.w || 
+				transform.m_position.y + transform.m_scale.y * sprite.m_height < camera.y ||
+				transform.m_position.y > camera.y + camera.h;
+
+			if (isEntityOutsideCameraView) continue;
+			
 			renderableEntities.emplace_back(renderableEntity);
 		}
 
