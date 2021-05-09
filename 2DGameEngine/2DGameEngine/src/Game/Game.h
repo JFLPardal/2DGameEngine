@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
-#include <SDL.h>
 
 #include "ECS/ECS.h"
 #include "AssetStore/AssetStore.h"
@@ -29,8 +28,8 @@ namespace CONST
 	}
 }
 //
-//struct SDL_Window;
-//struct SDL_Renderer;
+struct SDL_Window;
+struct SDL_Renderer;
 
 class Game
 {

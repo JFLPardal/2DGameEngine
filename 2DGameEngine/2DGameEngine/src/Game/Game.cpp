@@ -2,9 +2,9 @@
 
 #include <fstream>
 
+#include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <glm/glm.hpp>
 #include <imgui/imgui.h>
 #include <imgui/imgui_sdl.h>
 #include <imgui/imgui_impl_sdl.h>

@@ -1610,5 +1610,10 @@
     <None Include="SDL2_mixer.dll" />
     <None Include="SDL2_ttf.dll" />
     <None Include="zlib1.dll" />
+    <None Include="libs\lua\lua53.dll" />
+    <None Include="assets\scripts\myscript.lua" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\lua\liblua53.a" />
   </ItemGroup>
 </Project>

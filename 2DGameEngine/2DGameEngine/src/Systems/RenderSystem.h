@@ -44,7 +44,7 @@ public:
 				transform.m_position.y + transform.m_scale.y * sprite.m_height < camera.y ||
 				transform.m_position.y > camera.y + camera.h;
 
-			if (isEntityOutsideCameraView) continue;
+			if (isEntityOutsideCameraView && !sprite.m_isInCameraSpace) continue;
 			
 			renderableEntities.emplace_back(renderableEntity);
 		}

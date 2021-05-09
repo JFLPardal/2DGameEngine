@@ -129,6 +129,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>liblua53.a;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)2DGameEngine\libs\lua</AdditionalLibraryDirectories>
     </Link>
     <PreLinkEvent>
       <Command>@ECHO ON
@@ -552,6 +553,7 @@
     <ClInclude Include="src\Systems\RenderTextSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\scripts\myscript.lua" />
     <None Include="libFLAC-8.dll" />
     <None Include="libfreetype-6.dll" />
     <None Include="libjpeg-9.dll" />
@@ -693,6 +695,7 @@
     <None Include="libs\glm\gtx\vector_angle.inl" />
     <None Include="libs\glm\gtx\vector_query.inl" />
     <None Include="libs\glm\gtx\wrap.inl" />
+    <None Include="libs\lua\lua53.dll" />
     <None Include="libtiff-5.dll" />
     <None Include="libvorbis-0.dll" />
     <None Include="libvorbisfile-3.dll" />
@@ -703,6 +706,9 @@
     <None Include="SDL2_mixer.dll" />
     <None Include="SDL2_ttf.dll" />
     <None Include="zlib1.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\lua\liblua53.a" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
