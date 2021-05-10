@@ -2,8 +2,10 @@
 
 #include <map>
 #include <string>
-#include <SDL.h>
 #include <SDL_ttf.h>
+
+struct SDL_Renderer;
+struct SDL_Texture;
 
 class AssetStore
 {

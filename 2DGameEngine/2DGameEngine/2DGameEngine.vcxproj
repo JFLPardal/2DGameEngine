@@ -160,6 +160,7 @@
     <ClCompile Include="libs\imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="src\AssetStore\AssetStore.cpp" />
     <ClCompile Include="src\ECS\ECS.cpp" />
+    <ClCompile Include="src\Game\LevelLoader.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
     <ClCompile Include="src\Game\Game.cpp" />
     <ClCompile Include="libs\glm\detail\glm.cpp" />
@@ -172,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\imgui\imgui_impl_sdl.h" />
+    <ClInclude Include="src\Game\LevelLoader.h" />
     <ClInclude Include="src\Systems\RenderGUISystem.h" />
     <ClInclude Include="src\AssetStore\AssetStore.h" />
     <ClInclude Include="src\Components\AnimationComponent.h" />
@@ -553,6 +555,7 @@
     <ClInclude Include="src\Systems\RenderTextSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\scripts\Level1.lua" />
     <None Include="assets\scripts\myscript.lua" />
     <None Include="libFLAC-8.dll" />
     <None Include="libfreetype-6.dll" />

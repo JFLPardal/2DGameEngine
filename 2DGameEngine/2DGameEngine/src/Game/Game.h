@@ -20,16 +20,11 @@ namespace CONST
 		constexpr auto pico_8 = "pico-font";
 		constexpr auto pico_10 = "pico-font";
 	}
-	namespace COLORS
-	{
-		constexpr SDL_Color lightGrey{ 200, 200, 200, 255 };
-		constexpr SDL_Color orange{ 255, 165, 0, 255 };
-		constexpr SDL_Color red{ 180, 0, 0, 255 };
-	}
 }
 //
 struct SDL_Window;
 struct SDL_Renderer;
+struct SDL_Rect;
 
 class Game
 {
@@ -51,11 +46,10 @@ private:
 	void Render();
 
 	void Setup();
-	void LoadLevel(Uint8 levelNumber);
 
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
-	SDL_Rect m_camera;
+	std::unique_ptr<SDL_Rect> m_camera;
 
 	std::unique_ptr<Registry> m_registry;
 	std::unique_ptr<AssetStore> m_assetStore;

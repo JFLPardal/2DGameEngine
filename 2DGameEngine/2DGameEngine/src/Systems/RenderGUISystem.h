@@ -110,7 +110,8 @@ public:
 				float projectileVelY = projectileVelocity * glm::sin(glm::radians(static_cast<float>(projectileAngle)));
 				enemy.AddComponent<ProjectileEmitterComponent>(glm::vec2(projectileVelX, projectileVelY), projectileFrequencyInS * 1000, projectileLifetimeInS * 1000, projectileDamagePercentage, true);
 				enemy.AddComponent<HealthComponent>(initialHealth);
-				enemy.AddComponent<TextLabelComponent>(glm::vec2(0, -25),  std::to_string(initialHealth), CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
+
+				enemy.AddComponent<TextLabelComponent>(glm::vec2(0, -25),  std::to_string(initialHealth), CONST::FONT::pico_10, SDL_Color{ 200, 200, 200, 255 }, false);
 			
 				position[0], position[1], rotation, projectileAngle = 0;
 				scale[0], scale[1] = 1;

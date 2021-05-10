@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include <fstream>
-
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -10,17 +8,7 @@
 #include <imgui/imgui_impl_sdl.h>
 
 #include "Logger/Logger.h"
-
-#include "Components/TransformComponent.h"
-#include "Components/RigidbodyComponent.h"
-#include "Components/SpriteComponent.h"
-#include "Components/AnimationComponent.h"
-#include "Components/BoxColliderComponent.h"
-#include "Components/KeyboardControlledComponent.h"
-#include "Components/CameraFollowComponent.h"
-#include "Components/ProjectileEmitterComponent.h"
-#include "Components/HealthComponent.h"
-#include "Components/TextLabelComponent.h"
+#include "Game/LevelLoader.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -46,7 +34,7 @@ Game::Game()
     , m_assetStore(std::make_unique<AssetStore>())
     , m_registry(std::make_unique<Registry>())
     , m_eventBus(std::make_unique<EventBus>())
-    , m_camera(SDL_Rect{0,0, m_windowWidth, m_windowHeight})
+    , m_camera(std::make_unique<SDL_Rect>())
 {
     Logger::Log("game created");
 }
@@ -97,7 +85,8 @@ void Game::Initialize()
     ImGuiSDL::Initialize(m_renderer, m_windowWidth, m_windowHeight);
 
     // initialize the camera view with the entire screen area
-    m_camera = SDL_Rect{0,0, m_windowWidth, m_windowHeight};
+    SDL_Rect dsd{ 0,0, m_windowWidth, m_windowHeight };
+    m_camera = std::make_unique<SDL_Rect>(dsd);
 
     //SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
     m_IsRunning = true;
@@ -142,11 +131,6 @@ void Game::ProcessInput()
 
 void Game::Setup()
 {
-    LoadLevel(1);
-}
-
-void Game::LoadLevel(Uint8 levelNumber)
-{
     // add system to the game
     m_registry->AddSystem<MovementSystem>();
     m_registry->AddSystem<RenderSystem>();
@@ -162,106 +146,8 @@ void Game::LoadLevel(Uint8 levelNumber)
     m_registry->AddSystem<RenderHealthBarSystem>();
     m_registry->AddSystem<RenderGUISystem>();
 
-    // add assets to assetStore
-    m_assetStore->AddTexture(m_renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
-    m_assetStore->AddTexture(m_renderer, "radar-image", "./assets/images/radar.png");
-    m_assetStore->AddTexture(m_renderer, "tank-image", "./assets/images/tank-panther-right.png");
-    m_assetStore->AddTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
-    m_assetStore->AddTexture(m_renderer, "jungle-tileset", "./assets/tilemaps/jungle.png");
-    m_assetStore->AddTexture(m_renderer, "bullet-image", "./assets/images/bullet.png");
-    m_assetStore->AddTexture(m_renderer, "tree-image", "./assets/images/tree.png");
-    m_assetStore->AddFont(CONST::FONT::charriot_20, "./assets/fonts/charriot.ttf", 20);
-    m_assetStore->AddFont(CONST::FONT::pico_8, "./assets/fonts/pico8.ttf", 8);
-    m_assetStore->AddFont(CONST::FONT::pico_10, "./assets/fonts/pico8.ttf", 10);
-
-    // load tilemap
-    const Uint8 tileSize = 32;
-    double tileScale = 2.0;
-    const Uint8 mapNumCols = 25;
-    const Uint8 mapNumRows = 20;
-
-    std::fstream mapFile;
-    mapFile.open("./assets/tilemaps/jungle.map");
-
-    for (int y = 0; y < mapNumRows; y++)
-    {
-        for(int x = 0; x < mapNumCols; x++)
-        {
-            char ch;
-            mapFile.get(ch);
-            const int tilemapYIndex = std::atoi(&ch) * tileSize;
-            mapFile.get(ch);
-            const int tilemapXIndex = std::atoi(&ch) * tileSize;
-            mapFile.ignore();
-
-            Entity tile = m_registry->CreateEntity();
-            tile.Tag("tiles");
-            tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0);
-            tile.AddComponent<SpriteComponent>("jungle-tileset", tileSize, tileSize, 0, false, tilemapXIndex, tilemapYIndex);
-        }
-    }
-    mapFile.close();
-
-    m_mapWidth = tileSize * tileScale * mapNumCols;
-    m_mapHeight = tileSize * tileScale * mapNumRows;
-
-    // create entities
-    Entity chopper = m_registry->CreateEntity();
-    chopper.Tag("player");
-    chopper.AddComponent<TransformComponent>(glm::vec2(20, 400), glm::vec2(1, 1), 0);
-    chopper.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
-    chopper.AddComponent<BoxColliderComponent>(32, 32);
-    chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
-    chopper.AddComponent<AnimationComponent>(2, 12, true);
-    const auto movementSpeed = 300;
-    chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0,-movementSpeed), glm::vec2(movementSpeed,0), glm::vec2(0, movementSpeed), glm::vec2(-movementSpeed, 0));
-    chopper.AddComponent<CameraFollowComponent>();
-    chopper.AddComponent<HealthComponent>(100);
-    chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(500, 500), 0, 10000, 10);
-    chopper.AddComponent<TextLabelComponent>(glm::vec2(0,-25), "100%", CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
-
-    Entity radar = m_registry->CreateEntity();
-    radar.AddComponent<TransformComponent>(glm::vec2(m_windowWidth - 74, 10), glm::vec2(1, 1), 0);
-    radar.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
-    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 3, true);
-    radar.AddComponent<AnimationComponent>(8, 5, true);
-    
-    Entity tank = m_registry->CreateEntity();
-    tank.Group("enemies");
-    tank.AddComponent<TransformComponent>(glm::vec2(300, 20), glm::vec2(1, 1), 0);
-    tank.AddComponent<RigidbodyComponent>(glm::vec2(0, 0));
-    tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
-    tank.AddComponent<BoxColliderComponent>(32, 32);
-    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100, 0), 300, 6000, 25, true);
-    tank.AddComponent<HealthComponent>();
-    tank.AddComponent<TextLabelComponent>(glm::vec2(0, -25), "100%", CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
-
-    Entity truck = m_registry->CreateEntity();
-    truck.Group("enemies");
-    truck.AddComponent<TransformComponent>(glm::vec2(200, 500), glm::vec2(1, 1), 0);
-    truck.AddComponent<RigidbodyComponent>(glm::vec2(30, 0));
-    truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
-    truck.AddComponent<BoxColliderComponent>(32, 32);
-    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0, 50), 3000, 15000, 25, true);
-    truck.AddComponent<HealthComponent>();
-    truck.AddComponent<TextLabelComponent>(glm::vec2(0, -25), "100%", CONST::FONT::pico_10, CONST::COLORS::lightGrey, false);
-
-    Entity tree01 = m_registry->CreateEntity();
-    tree01.Group("obstacles");
-    tree01.AddComponent<TransformComponent>(glm::vec2(300, 485));
-    tree01.AddComponent<SpriteComponent>("tree-image", 16, 32, 2);
-    tree01.AddComponent<BoxColliderComponent>(16, 32);
-    
-    Entity tree02 = m_registry->CreateEntity();
-    tree02.Group("obstacles");
-    tree02.AddComponent<TransformComponent>(glm::vec2(150, 485));
-    tree02.AddComponent<SpriteComponent>("tree-image", 16, 32, 2);
-    tree02.AddComponent<BoxColliderComponent>(16, 32);
-
-    Entity textLabel = m_registry->CreateEntity();
-    SDL_Color lightGrey = { 200, 200, 200, 255 };
-    textLabel.AddComponent<TextLabelComponent>(glm::vec2(m_windowWidth * .5f - 100 ,20), "GAME ENGINE SHOWCASE", CONST::FONT::charriot_20, lightGrey, true);
-
+    LevelLoader levelLoader;
+    levelLoader.LoadLevel(1, m_registry, m_assetStore, m_renderer);
 }
 
 void Game::Update()
@@ -295,7 +181,7 @@ void Game::Update()
     m_registry->GetSystem<CollisionSystem>().Update(m_eventBus);
     m_registry->GetSystem<ProjectileEmitSystem>().Update(m_registry);
     m_registry->GetSystem<ProjectileLifeCycleSystem>().Update();
-    m_registry->GetSystem<CameraMovementSystem>().Update(m_camera);
+    m_registry->GetSystem<CameraMovementSystem>().Update(*m_camera);
 }
 
 void Game::Run()
@@ -314,13 +200,13 @@ void Game::Render()
     SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
 
-    m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, m_camera);
-    m_registry->GetSystem<RenderTextSystem>().Update(m_assetStore, m_renderer, m_camera);
-    m_registry->GetSystem<RenderHealthBarSystem>().Update(m_renderer, m_assetStore, m_camera);
+    m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, *m_camera);
+    m_registry->GetSystem<RenderTextSystem>().Update(m_assetStore, m_renderer, *m_camera);
+    m_registry->GetSystem<RenderHealthBarSystem>().Update(m_renderer, m_assetStore, *m_camera);
     if (m_shouldRenderDebug)
     {
-        m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, m_camera);
-        m_registry->GetSystem<RenderGUISystem>().Update(m_registry, m_assetStore, m_camera);
+        m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, *m_camera);
+        m_registry->GetSystem<RenderGUISystem>().Update(m_registry, m_assetStore, *m_camera);
     }
 
     SDL_RenderPresent(m_renderer);

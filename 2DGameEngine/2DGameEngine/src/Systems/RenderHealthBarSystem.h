@@ -31,9 +31,9 @@ public:
 			SDL_Color healthBarColor;
 			const auto currentHealth = health.m_currentHealthPertcentage;
 
-			if (currentHealth > 50)		healthBarColor = CONST::COLORS::lightGrey;
-			else if(currentHealth > 20) healthBarColor = CONST::COLORS::orange;
-			else										healthBarColor = CONST::COLORS::red;
+			if (currentHealth > 50)		healthBarColor = { 200, 200, 200, 255 };
+			else if(currentHealth > 20) healthBarColor = { 255, 165, 0, 255 };
+			else										healthBarColor = { 180, 0, 0, 255 };
 
 			SDL_SetRenderDrawColor(renderer, healthBarColor.r, healthBarColor.g, healthBarColor.b, healthBarColor.a);
 			
