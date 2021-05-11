@@ -31,10 +31,10 @@ int Game::m_mapHeight = 0;
 
 Game::Game()
     : m_IsRunning(false)
+    , m_camera(std::make_unique<SDL_Rect>())
     , m_assetStore(std::make_unique<AssetStore>())
     , m_registry(std::make_unique<Registry>())
     , m_eventBus(std::make_unique<EventBus>())
-    , m_camera(std::make_unique<SDL_Rect>())
 {
     Logger::Log("game created");
 }
@@ -147,7 +147,8 @@ void Game::Setup()
     m_registry->AddSystem<RenderGUISystem>();
 
     LevelLoader levelLoader;
-    levelLoader.LoadLevel(1, m_registry, m_assetStore, m_renderer);
+    m_lua.open_libraries(sol::lib::base, sol::lib::math);
+    levelLoader.LoadLevel(1, m_registry, m_assetStore, m_renderer, m_lua);
 }
 
 void Game::Update()

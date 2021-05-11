@@ -34,10 +34,55 @@ LevelLoader::LevelLoader()
 {
 }
 
-void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer)
+void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, sol::state& lua)
 {
-    sol::state lua;
-    lua.open_libraries(sol::lib::base);
+    // this call will check the script's syntax before executing it potentially avoid abortion
+    // of the program if something went wrong by simply spitting a message out
+    sol::load_result script = lua.load_file("./assets/scripts/Level" + std::to_string(levelToLoad) + ".lua");
+    if (!script.valid())
+    {
+        sol::error error = script;
+        std::string errorMessage = error.what();
+        Logger::Error("Error loading lua script: "+ errorMessage);
+        return;
+    }
+
+    // executes script
+    lua.script_file("./assets/scripts/Level" + std::to_string(levelToLoad) + ".lua");
+
+    sol::table level = lua["Level"];
+    
+    // read assets
+    {
+        sol::table assets = level["assets"];
+        int i = 0;
+        while (true)
+        {
+            //checks if assets[i] exists
+            sol::optional<sol::table> hasAsset = assets[i];
+            if (hasAsset == sol::nullopt)
+            {
+                break;
+            }
+            sol::table asset = assets[i];
+
+            const std::string assetType = asset["type"];
+            const std::string assetId = asset["id"];
+            if (assetType == "texture")
+            {
+                assetStore->AddTexture(renderer, asset["id"], asset["file"]);
+                Logger::Log("AssetStore: Added texture: " + assetId);
+            }
+            else if (assetType == "font")
+            {
+                const std::string fontSizeAsString = asset["font_size"];
+                assetStore->AddFont(asset["id"], asset["file"], asset["font_size"]);
+                Logger::Log("AssetStore: Added font: " + assetId + " with size: " + fontSizeAsString);
+            }
+            i++;
+        }
+    }
+    
 
     // add assets to assetStore
     assetStore->AddTexture(renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");

@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
+#include <sol/sol.hpp>
 
 #include "ECS/ECS.h"
 #include "AssetStore/AssetStore.h"
@@ -49,6 +50,9 @@ private:
 
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
+	
+	sol::state m_lua;
+	
 	std::unique_ptr<SDL_Rect> m_camera;
 
 	std::unique_ptr<Registry> m_registry;
