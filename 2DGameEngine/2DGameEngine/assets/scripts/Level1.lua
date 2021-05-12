@@ -12,9 +12,10 @@ Level =
         { type = "texture", id = "radar-image", file = "./assets/images/radar.png"}, 
         { type = "texture", id = "bullet-image", file = "./assets/images/bullet.png"}, 
         { type = "texture", id = "tree-image", file = "./assets/images/tree.png"}, 
-        { type = "font", id = "pico-font-8", file = "./assets/fonts/pico8.ttf", font_size= 8}, 
-        { type = "font", id = "pico-font-10", file = "./assets/fonts/pico8.ttf", font_size= 10}
-	},
+        { type = "font", id = "pico-font", file = "./assets/fonts/pico8.ttf", font_size = 8}, 
+        { type = "font", id = "pico-font-10", file = "./assets/fonts/pico8.ttf", font_size = 10},
+        { type = "font", id = "charriot-font", file = "./assets/fonts/charriot.ttf", font_size= 20}	
+        },
     -- map configuration variables
     tilemap = 
     {
@@ -58,9 +59,9 @@ Level =
                 },
                 box_collider = 
                 {
-                    offset = { x = 0, y = 5 },
                     width = 32,
-                    height = 25
+                    height = 25,
+                    offset = { x = 0, y = 5 }
                 },
                 health = 
                 {
@@ -68,7 +69,7 @@ Level =
                 },
                 projectile_emitter = 
                 {
-                    projectile_velocity = { x = 100, y = 100 },
+                    projectile_velocity = { x = 400, y = 400 },
                     projectile_duration = 10000, -- ms
                     repeat_frequency = 0, -- ms
                     hit_percentage_damage = 10,
@@ -76,10 +77,10 @@ Level =
                 },
                 keyboard_controller = 
                 {
-                    up_velocity = { x = 0, y = -50 },
-                    right_velocity = { x = 50, y = 0 },
-                    down_velocity = { x = 0, y = 50 },
-                    left_velocity = { x = -50, y = 0 },
+                    up_velocity = { x = 0, y = -150 },
+                    right_velocity = { x = 150, y = 0 },
+                    down_velocity = { x = 0, y = 150 },
+                    left_velocity = { x = -150, y = 0 },
                 },
                 camera_follow = 
                 {
@@ -100,12 +101,12 @@ Level =
                 },
                 sprite = 
                 {
-                    texture_asset_id = "tank-texture",
+                    texture_asset_id = "tank-image",
                     width = 32,
                     height = 32,
                     z_index = 2
                 },
-                boxcollider = 
+                box_collider = 
                 {
                     width = 25,
                     height = 18,
@@ -118,11 +119,19 @@ Level =
                 projectile_emitter = 
                 {
                     projectile_velocity = { x = 100, y = 0 },
-                    projectile_duration = 2000, -- ms
-                    repeat_frequency = 1000, -- ms
+                    projectile_duration = 2, -- ms
+                    repeat_frequency = 1, -- ms
                     hit_percentage_damage = 20,
-                    friendly = false
+                    should_collide_with_player = true
                 }
+                --text_label = 
+                --{
+                --    position = {0, -25},
+                --    initial_hp = 100,
+                --    font = "",
+                --    color = ,
+                --
+                --}
             }
         }
     }

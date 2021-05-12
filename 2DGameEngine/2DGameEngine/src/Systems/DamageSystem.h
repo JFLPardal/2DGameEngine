@@ -9,7 +9,6 @@
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/ProjectileComponent.h"
-#include "Components/TextLabelComponent.h"
 
 class DamageSystem : public System
 {
@@ -61,10 +60,8 @@ private:
 		if (projectileComponent.m_shouldCollideWithPlayer)
 		{
 			auto& playerHealth = player.GetComponent<HealthComponent>();
-			auto& healthLabel = player.GetComponent<TextLabelComponent>();
 
 			playerHealth.m_currentHealthPertcentage -= projectileComponent.m_damagePercentage;
-			healthLabel.m_text = std::to_string(playerHealth.m_currentHealthPertcentage) + "%";
 
 			if (playerHealth.m_currentHealthPertcentage <= 0)
 			{
@@ -82,10 +79,8 @@ private:
 		if (!projectileComponent.m_shouldCollideWithPlayer)
 		{
 			auto& enemyHealth = enemy.GetComponent<HealthComponent>();
-			auto& healthLabel = enemy.GetComponent<TextLabelComponent>();
 
 			enemyHealth.m_currentHealthPertcentage -= projectileComponent.m_damagePercentage;
-			healthLabel.m_text = std::to_string(enemyHealth.m_currentHealthPertcentage) + "%";
 
 			if (enemyHealth.m_currentHealthPertcentage <= 0)
 			{
