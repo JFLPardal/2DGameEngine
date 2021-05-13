@@ -1,3 +1,14 @@
+local map_texture_asset_id
+
+local current_system_hour = os.date("*t").hour
+local is_day_time = current_system_hour >= 9 and current_system_hour <= 18
+
+if is_day_time then
+    map_texture_asset_id = "jungle-day"
+else 
+    map_texture_asset_id = "jungle-night"
+end
+
 Level =
 {
     -- list of assets
@@ -5,7 +16,8 @@ Level =
     {   
         -- by default lua starts indices at 1. This makes it so that the table is 0 indiced
         [0] =
-        { type = "texture", id = "jungle-tileset", file ="./assets/tilemaps/jungle.png"}, 
+        { type = "texture", id = "jungle-day", file ="./assets/tilemaps/jungle.png"}, 
+        { type = "texture", id = "jungle-night", file ="./assets/tilemaps/jungle-night.png"}, 
         { type = "texture", id = "chopper-image", file = "./assets/images/chopper-spritesheet.png"}, 
         { type = "texture", id = "tank-image", file = "./assets/images/tank-panther-right.png"}, 
         { type = "texture", id = "truck-image", file = "./assets/images/truck-ford-right.png"}, 
@@ -20,7 +32,7 @@ Level =
     tilemap = 
     {
         map_file = "./assets/tilemaps/jungle.map",
-        texture_asset_id = "jungle-tileset",
+        texture_asset_id = map_texture_asset_id,
         num_rows = 20,
         num_cols = 25,
         tile_size = 32,
@@ -124,14 +136,6 @@ Level =
                     hit_percentage_damage = 20,
                     should_collide_with_player = true
                 }
-                --text_label = 
-                --{
-                --    position = {0, -25},
-                --    initial_hp = 100,
-                --    font = "",
-                --    color = ,
-                --
-                --}
             }
         }
     }
