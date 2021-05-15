@@ -91,6 +91,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\src;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,6 +108,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)2DGameEngine\src;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\imgui\imgui_impl_sdl.h" />
+    <ClInclude Include="src\Components\ScriptComponent.h" />
     <ClInclude Include="src\Game\LevelLoader.h" />
     <ClInclude Include="src\Systems\RenderGUISystem.h" />
     <ClInclude Include="src\AssetStore\AssetStore.h" />
@@ -553,6 +556,7 @@
     <ClInclude Include="src\Systems\RenderHealthBarSystem.h" />
     <ClInclude Include="src\Systems\RenderSystem.h" />
     <ClInclude Include="src\Systems\RenderTextSystem.h" />
+    <ClInclude Include="src\Systems\ScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\scripts\Level1.lua" />

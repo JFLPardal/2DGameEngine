@@ -23,6 +23,7 @@
 #include "Systems/RenderTextSystem.h"
 #include "Systems/RenderHealthBarSystem.h"
 #include "Systems/RenderGUISystem.h"
+#include "Systems/ScriptSystem.h"
 
 int Game::m_windowWidth = 1680;
 int Game::m_windowHeight = 1050;
@@ -145,6 +146,7 @@ void Game::Setup()
     m_registry->AddSystem<RenderTextSystem>();
     m_registry->AddSystem<RenderHealthBarSystem>();
     m_registry->AddSystem<RenderGUISystem>();
+    m_registry->AddSystem<ScriptSystem>();
 
     LevelLoader levelLoader;
     m_lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
@@ -183,6 +185,7 @@ void Game::Update()
     m_registry->GetSystem<ProjectileEmitSystem>().Update(m_registry);
     m_registry->GetSystem<ProjectileLifeCycleSystem>().Update();
     m_registry->GetSystem<CameraMovementSystem>().Update(*m_camera);
+    m_registry->GetSystem<ScriptSystem>().Update();
 }
 
 void Game::Run()

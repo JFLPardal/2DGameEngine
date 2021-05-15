@@ -116,6 +116,7 @@ Level =
                     texture_asset_id = "tank-image",
                     width = 32,
                     height = 32,
+                    z_index = 2
                 },
                 box_collider = 
                 {
@@ -139,7 +140,7 @@ Level =
         },
         {
             group="enemies",
-            compnents = 
+            components = 
             {
                 transform = 
                 {
@@ -162,7 +163,7 @@ Level =
                 {
                     num_frames = 2,
                     speed_rate = 10
-                }
+                },
                 box_collider = 
                 {
                     width = 32,
@@ -186,8 +187,8 @@ Level =
                     -- makes the entity move up and down on the map
                     function(entity, delta_time, ellapsed_time)
                         print("tank that moves up and down")
-                       --[[  
-                       local current_position_x, current_position_y = get_position(entity)
+                        --[[  
+                        local current_position_x, current_position_y = get_position(entity)
                         local current_velocity_x, current_velocity_y = get_velocity(entity)
 
                         if current_position_y < 10 or current_position_y > map_height - 32 then
@@ -205,12 +206,12 @@ Level =
                         end
                         --]]
                     end
-                    
                 }
             }
-        }{
+        },
+        {
             group="enemies",
-            compnents = 
+            components = 
             {
                 transform = 
                 {
@@ -233,7 +234,7 @@ Level =
                 {
                     num_frames = 2,
                     speed_rate = 10
-                }
+                },
                 box_collider = 
                 {
                     width = 32,
@@ -253,10 +254,10 @@ Level =
                 },
                 on_update_script = 
                 {
-                    [0] = 
+                    [0] =
                     function(entity, delta_time, ellapsed_time)
                         print("moving second new entity")
-                     --[[   
+                        --[[   
                         local new_x = ellapsed_time * 0.09
                         local new_y = 200 + (math.sin(ellapsed_time * 0.001) * 50)
                         set_position(entity, new_x, new_y)
@@ -268,5 +269,5 @@ Level =
     }
 }
 
-map_width = Level.tilemap.num_cols * Level.tilemap.tile_size * Level.tilemap.scale
-map_height = Level.tilemap.num_rows * Level.tilemap.tile_size * Level.tilemap.scale
+map_width = Level.tilemap.num_cols * Level.tilemap.tile_size * Level.tilemap.tile_scale
+map_height = Level.tilemap.num_rows * Level.tilemap.tile_size * Level.tilemap.tile_scale

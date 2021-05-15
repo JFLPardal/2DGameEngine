@@ -19,6 +19,7 @@
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/TextLabelComponent.h"
+#include "Components/ScriptComponent.h"
 
 namespace CONST
 {
@@ -267,6 +268,14 @@ void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Regi
                             entity["components"]["keyboard_controller"]["left_velocity"]["y"]
                         )
                         );
+                }
+
+                // lua script 
+                sol::optional<sol::table> script = entity["components"]["on_update_script"];
+                if (script != sol::nullopt)
+                {
+                    sol::function function = entity["components"]["on_update_script"][0];
+                    newEntity.AddComponent<ScriptComponent>(function);
                 }
             }
             i++;
