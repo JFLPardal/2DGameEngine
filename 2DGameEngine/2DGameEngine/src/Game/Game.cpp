@@ -148,6 +148,8 @@ void Game::Setup()
     m_registry->AddSystem<RenderGUISystem>();
     m_registry->AddSystem<ScriptSystem>();
 
+    m_registry->GetSystem<ScriptSystem>().CreateLuaFunctionBindings(m_lua);
+
     LevelLoader levelLoader;
     m_lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
     levelLoader.LoadLevel(1, m_registry, m_assetStore, m_renderer, m_lua);
@@ -185,7 +187,7 @@ void Game::Update()
     m_registry->GetSystem<ProjectileEmitSystem>().Update(m_registry);
     m_registry->GetSystem<ProjectileLifeCycleSystem>().Update();
     m_registry->GetSystem<CameraMovementSystem>().Update(*m_camera);
-    m_registry->GetSystem<ScriptSystem>().Update();
+    m_registry->GetSystem<ScriptSystem>().Update(deltaTime, SDL_GetTicks());
 }
 
 void Game::Run()

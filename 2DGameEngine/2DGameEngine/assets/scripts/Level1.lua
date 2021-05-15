@@ -161,7 +161,7 @@ Level =
                 },
                 animation = 
                 {
-                    num_frames = 2,
+                    num_frames = 1,
                     speed_rate = 10
                 },
                 box_collider = 
@@ -232,7 +232,7 @@ Level =
                 },
                 animation = 
                 {
-                    num_frames = 2,
+                    num_frames = 1,
                     speed_rate = 10
                 },
                 box_collider = 
@@ -255,13 +255,10 @@ Level =
                 on_update_script = 
                 {
                     [0] =
-                    function(entity, delta_time, ellapsed_time)
-                        print("moving second new entity")
-                        --[[   
+                    function(entity, delta_time, ellapsed_time)                       
                         local new_x = ellapsed_time * 0.09
                         local new_y = 200 + (math.sin(ellapsed_time * 0.001) * 50)
                         set_position(entity, new_x, new_y)
-                    --]]
                     end
                 }
             }
