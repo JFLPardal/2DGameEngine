@@ -184,17 +184,16 @@ Level =
                 on_update_script = 
                 {
                     [0] = 
-                    -- makes the entity move up and down on the map
+                    -- makes the entity move up and down the map
                     function(entity, delta_time, ellapsed_time)
-                        print("tank that moves up and down")
-                        --[[  
                         local current_position_x, current_position_y = get_position(entity)
                         local current_velocity_x, current_velocity_y = get_velocity(entity)
 
-                        if current_position_y < 10 or current_position_y > map_height - 32 then
+                        arrived_at_return_position = current_position_y < 10 or current_position_y > map_height - 32
+                        if arrived_at_return_position then
                             set_velocity(entity, 0, current_velocity_y * -1)
                         else
-                            set_velocity(entity 0, current_velocity_y)
+                            set_velocity(entity, 0, current_velocity_y)
                         end
 
                         if(current_velocity_y < 0) then
@@ -204,7 +203,6 @@ Level =
                             set_rotation(entity, 180)
                             set_projectile_velocity(entity, 0, 200)
                         end
-                        --]]
                     end
                 }
             }
@@ -217,7 +215,7 @@ Level =
                 {
                     position = { x = 10, y = 10 },
                     scale = { x = 1.0, y = 1.0 },
-                    rotation = 90.0, -- deg
+                    rotation = 0.0, -- deg
                 },
                 rigidbody = 
                 {

@@ -14,3 +14,5 @@ Simple 2D game engine that uses SDL, GLM, Dear ImGUI and Lua, based on an online
 - [ ] Use pre compiled headers - compilation is getting slower than it needs to be and the more that is added to the engine the worse it's going to get (and harder it will be to implement this) 
 
 - [ ] Data validation - some data is assumed to exist and there is no code to protect the program if that data is not present. Some examples are - an invalid filepath for a texture, checking if an entity has a given tag when that tag does not exist and places where we are using pointers that are not all being null verified
+
+- [ ] C++/lua API should be extracted to its own file - the functions that can be called from the lua side (like getEntityPosition, SetProjectileVelocity) should be in a file of their own where they can be easily consulted by someone that wants to script only with lua and wants to know what functions are available.
