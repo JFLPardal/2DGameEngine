@@ -1623,8 +1623,10 @@
     <None Include="SDL2_ttf.dll" />
     <None Include="zlib1.dll" />
     <None Include="libs\lua\lua53.dll" />
-    <None Include="assets\scripts\myscript.lua" />
+    <None Include="assets\scripts\Level2.lua" />
     <None Include="assets\scripts\Level1.lua" />
+    <None Include="assets\tilemaps\desert.map" />
+    <None Include="assets\tilemaps\jungle.map" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\lua\liblua53.a" />
@@ -1889,6 +1891,15 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="assets\images\upf7-spritesheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\tilemaps\desert.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\tilemaps\jungle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\tilemaps\jungle-night.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

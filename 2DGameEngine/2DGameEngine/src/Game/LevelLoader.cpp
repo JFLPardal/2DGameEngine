@@ -89,7 +89,7 @@ void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Regi
         const sol::table tilemap = level["tilemap"];
         // load tilemap
         const Uint8 tileSize = tilemap["tile_size"];
-        double tileScale = tilemap["tile_scale"];
+        double tileScale = tilemap["scale"];
         const Uint8 mapNumCols = tilemap["num_cols"];
         const Uint8 mapNumRows = tilemap["num_rows"];
 

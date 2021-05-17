@@ -18,8 +18,8 @@ namespace CONST
 	namespace FONT
 	{
 		constexpr auto charriot_20 = "charriot-font";
-		constexpr auto pico_8 = "pico-font";
-		constexpr auto pico_10 = "pico-font";
+		constexpr auto pico_8 = "pico8-font-8";
+		constexpr auto pico_10 = "pico8-font-10";
 	}
 }
 //

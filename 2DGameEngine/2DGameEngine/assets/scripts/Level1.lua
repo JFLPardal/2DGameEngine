@@ -24,8 +24,8 @@ Level =
         { type = "texture", id = "radar-image", file = "./assets/images/radar.png"}, 
         { type = "texture", id = "bullet-image", file = "./assets/images/bullet.png"}, 
         { type = "texture", id = "tree-image", file = "./assets/images/tree.png"}, 
-        { type = "font", id = "pico-font", file = "./assets/fonts/pico8.ttf", font_size = 8}, 
-        { type = "font", id = "pico-font-10", file = "./assets/fonts/pico8.ttf", font_size = 10},
+        { type = "font", id = "pico8-font-8", file = "./assets/fonts/pico8.ttf", font_size = 8}, 
+        { type = "font", id = "pico8-font-10", file = "./assets/fonts/pico8.ttf", font_size = 10},
         { type = "font", id = "charriot-font", file = "./assets/fonts/charriot.ttf", font_size= 20}	
         },
     -- map configuration variables
@@ -36,7 +36,7 @@ Level =
         num_rows = 20,
         num_cols = 25,
         tile_size = 32,
-        tile_scale = 2.0
+        scale = 2.0
     },
     -- list of the level entities
     entities = 
@@ -264,5 +264,5 @@ Level =
     }
 }
 
-map_width = Level.tilemap.num_cols * Level.tilemap.tile_size * Level.tilemap.tile_scale
-map_height = Level.tilemap.num_rows * Level.tilemap.tile_size * Level.tilemap.tile_scale
+map_width = Level.tilemap.num_cols * Level.tilemap.tile_size * Level.tilemap.scale
+map_height = Level.tilemap.num_rows * Level.tilemap.tile_size * Level.tilemap.scale
