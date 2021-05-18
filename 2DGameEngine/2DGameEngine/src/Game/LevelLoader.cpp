@@ -35,6 +35,11 @@ LevelLoader::LevelLoader()
 {
 }
 
+void LevelLoader::LoadLevel(const std::string& levelToLoad, const std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, sol::state& lua)
+{
+    ParseLevel("./assets/scripts/" + levelToLoad + ".lua", registry, assetStore, renderer, lua);
+}
+
 void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, sol::state& lua)
 {
     // this call will check the script's syntax before executing it potentially avoid abortion
@@ -47,12 +52,17 @@ void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Regi
         Logger::Error("Error loading lua script: "+ errorMessage);
         return;
     }
+    ParseLevel("./assets/scripts/Level" + std::to_string(levelToLoad) + ".lua", registry, assetStore, renderer, lua);
+    
+}
 
-    // executes script
-    lua.script_file("./assets/scripts/Level" + std::to_string(levelToLoad) + ".lua");
+void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, sol::state& lua)
+{
+    // executes script, could verify if the ending is .lua and if not add it here for safety
+    lua.script_file(levelToLoad);
 
     sol::table level = lua["Level"];
-    
+
     // read assets
     {
         sol::table assets = level["assets"];
@@ -83,41 +93,55 @@ void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Regi
             i++;
         }
     }
-    
+
     // read map
     {
-        const sol::table tilemap = level["tilemap"];
-        // load tilemap
-        const Uint8 tileSize = tilemap["tile_size"];
-        double tileScale = tilemap["scale"];
-        const Uint8 mapNumCols = tilemap["num_cols"];
-        const Uint8 mapNumRows = tilemap["num_rows"];
-
-        const std::string mapPath = tilemap["map_file"];
-        std::fstream mapFile;
-        mapFile.open(mapPath);
-
-        for (int y = 0; y < mapNumRows; y++)
+        sol::optional<sol::table> tilemap = level["tilemap"];
+        const bool isMapDefined = tilemap != sol::nullopt;
+        if (isMapDefined)
         {
-            for (int x = 0; x < mapNumCols; x++)
+            const sol::table tilemap = level["tilemap"];
+            // load tilemap
+            const Uint8 tileSize = tilemap["tile_size"];
+            double tileScale = tilemap["scale"];
+            const Uint8 mapNumCols = tilemap["num_cols"].get_or(0);
+            const Uint8 mapNumRows = tilemap["num_rows"].get_or(0);
+
+            const std::string mapPath = tilemap["map_file"];
+            std::fstream mapFile;
+            if (isMapDefined)
             {
-                char ch;
-                mapFile.get(ch);
-                const int tilemapYIndex = std::atoi(&ch) * tileSize;
-                mapFile.get(ch);
-                const int tilemapXIndex = std::atoi(&ch) * tileSize;
-                mapFile.ignore();
-
-                Entity tile = registry->CreateEntity();
-                tile.Tag("tiles");
-                tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0);
-                tile.AddComponent<SpriteComponent>(tilemap["texture_asset_id"], tileSize, tileSize, 0, false, tilemapXIndex, tilemapYIndex);
+                mapFile.open(mapPath);
             }
-        }
-        mapFile.close();
 
-        Game::m_mapWidth = tileSize * tileScale * mapNumCols;
-        Game::m_mapHeight = tileSize * tileScale * mapNumRows;
+            for (int y = 0; y < mapNumRows; y++)
+            {
+                for (int x = 0; x < mapNumCols; x++)
+                {
+                    char ch;
+                    mapFile.get(ch);
+                    const int tilemapYIndex = std::atoi(&ch) * tileSize;
+                    mapFile.get(ch);
+                    const int tilemapXIndex = std::atoi(&ch) * tileSize;
+                    mapFile.ignore();
+
+                    Entity tile = registry->CreateEntity();
+                    tile.Tag("tiles");
+                    tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0);
+                    tile.AddComponent<SpriteComponent>(tilemap["texture_asset_id"], tileSize, tileSize, 0, false, tilemapXIndex, tilemapYIndex);
+                }
+            }
+            mapFile.close();
+
+            Game::m_mapWidth = tileSize * tileScale * mapNumCols;
+            Game::m_mapHeight = tileSize * tileScale * mapNumRows;
+        }
+        else
+        {
+            Game::m_mapWidth = 1024;
+            Game::m_mapHeight = 768;
+        }
+
     }
 
     // read entities
@@ -138,7 +162,7 @@ void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Regi
             {
                 newEntity.Tag(entity["tag"]);
             }
-            
+
             // group
             const sol::optional<std::string> hasGroup = entity["group"];
             if (hasGroup != sol::nullopt)
@@ -155,9 +179,9 @@ void LevelLoader::LoadLevel(unsigned int levelToLoad, const std::unique_ptr<Regi
                 const sol::optional<sol::table> hasTransform = components["transform"];
                 if (hasTransform != sol::nullopt)
                 {
-                   
+
                     const sol::table transform = components["transform"];
-                   //get_or assigns the values passed as argument if a value was not specified
+                    //get_or assigns the values passed as argument if a value was not specified
                     newEntity.AddComponent<TransformComponent>(
                         glm::vec2(transform["position"]["x"], transform["position"]["y"]),
                         glm::vec2(transform["scale"]["x"].get_or(1.0), transform["scale"]["y"].get_or(1.0)),

@@ -1627,6 +1627,7 @@
     <None Include="assets\scripts\Level1.lua" />
     <None Include="assets\tilemaps\desert.map" />
     <None Include="assets\tilemaps\jungle.map" />
+    <None Include="assets\scripts\PlayerPrototype.lua" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\lua\liblua53.a" />
@@ -1900,6 +1901,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="assets\tilemaps\jungle-night.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\RoomClearer\chopper-spritesheet.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

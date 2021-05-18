@@ -152,7 +152,8 @@ void Game::Setup()
 
     LevelLoader levelLoader;
     m_lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-    levelLoader.LoadLevel(2, m_registry, m_assetStore, m_renderer, m_lua);
+   // levelLoader.LoadLevel(2, m_registry, m_assetStore, m_renderer, m_lua);
+    levelLoader.LoadLevel("PlayerPrototype", m_registry, m_assetStore, m_renderer, m_lua);
 }
 
 void Game::Update()
