@@ -77,7 +77,8 @@ public:
 
 			bool isMovingInX = false;
 			bool isMovingInY = false;
-			glm::vec2 newVelocity = rigidbody.m_velocity;//{ 0, 0 };
+			glm::vec2 newVelocity = rigidbody.m_velocity;
+
 			if (keyboardStateArray[SDL_SCANCODE_W])
 			{
 				newVelocity.y = keyboardControl.m_upVelocity.y;
@@ -98,7 +99,7 @@ public:
 				newVelocity.x = keyboardControl.m_rightVelocity.x;
 				isMovingInX = true;
 			}
-			//TODO normalize velocity for diagonal speed
+			// TODO normalize velocity for diagonal speed
 			// TODO cleanup/simplify the code, this is messy as hell
 			if (!isMovingInX)
 			{

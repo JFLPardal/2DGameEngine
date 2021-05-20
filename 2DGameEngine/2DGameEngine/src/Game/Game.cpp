@@ -65,7 +65,7 @@ void Game::Initialize()
         SDL_WINDOWPOS_CENTERED,
         m_windowWidth,
         m_windowHeight,
-        SDL_WINDOW_BORDERLESS
+        NULL
         );
     if(!m_window)
     {
@@ -154,6 +154,8 @@ void Game::Setup()
     m_lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
    // levelLoader.LoadLevel(2, m_registry, m_assetStore, m_renderer, m_lua);
     levelLoader.LoadLevel("PlayerPrototype", m_registry, m_assetStore, m_renderer, m_lua);
+    SDL_SetWindowSize(m_window, Game::m_mapWidth, Game::m_mapHeight);
+    SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 }
 
 void Game::Update()
