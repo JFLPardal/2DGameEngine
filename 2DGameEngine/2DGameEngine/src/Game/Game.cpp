@@ -128,6 +128,11 @@ void Game::ProcessInput()
             break;
         }
     }
+    const bool isLeftMousePressed = SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT);
+    if (isLeftMousePressed)
+    {
+        m_eventBus->EmitEvent<LeftMouseButtonPressedEvent>(*m_camera);
+    }
 }
 
 void Game::Setup()

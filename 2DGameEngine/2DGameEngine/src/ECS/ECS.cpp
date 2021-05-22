@@ -192,7 +192,7 @@ bool  Registry::EntityBelongsToGroup(Entity entity, const std::string& group) co
 {
 	if (m_entitiesPerGroup.find(group) == m_entitiesPerGroup.end())
 	{
-		Logger::Log("checking if an entity belongs to a non existing group:[" + group + "]");
+		//Logger::Log("checking if an entity belongs to a non existing group:[" + group + "]");
 		return false;
 	}
 	auto groupEntities = m_entitiesPerGroup.at(group);

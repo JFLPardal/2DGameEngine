@@ -3,7 +3,8 @@ Level =
 	assets = 
 	{
 		[0] =
-		{ type="texture", id="player_character", file="./assets/RoomClearer/chopper-spritesheet.png" }
+		{ type="texture", id="player-character", file="./assets/RoomClearer/chopper-spritesheet.png" },
+		{ type="texture", id="bullet-image", file="./assets/RoomClearer/bullet.png"}
 	},
 	entities = 
 	{
@@ -20,7 +21,7 @@ Level =
 				},
 				sprite = 
 				{
-					texture_asset_id = "player_character",
+					texture_asset_id = "player-character",
 					width = 32,
 					height = 32,
 					z_index = 3
@@ -45,6 +46,11 @@ Level =
 				{
 					width = 32,
 					height = 32
+				},
+				projectile_emitter =
+				{
+					projectile_velocity = { x = 100, y = 100 },
+					should_collide_with_player = false
 				}
 			}
 		}
