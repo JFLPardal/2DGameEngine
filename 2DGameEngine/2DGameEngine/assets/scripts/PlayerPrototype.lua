@@ -36,8 +36,8 @@ Level =
 				},
 				keyboard_controller =
 				{
-					up_velocity = { x = 0, y = -150 },
-                    right_velocity = { x = 150, y = 0 },
+					up_velocity = { x = 0, y = -200 },
+                    right_velocity = { x = 200, y = 0 },
                     down_velocity = { x = 0, y = 150 },
                     left_velocity = { x = -150, y = 0 },
 				},

@@ -77,61 +77,64 @@ public:
 
 			bool isMovingInX = false;
 			bool isMovingInY = false;
-			glm::vec2 newVelocity = rigidbody.m_velocity;
 
-			if (keyboardStateArray[SDL_SCANCODE_W])
-			{
-				newVelocity.y = keyboardControl.m_upVelocity.y;
-				isMovingInY = true;
-			}
-			if (keyboardStateArray[SDL_SCANCODE_A])
-			{
-				newVelocity.x = keyboardControl.m_leftVelocity.x;
-				isMovingInX = true;
-			}
-			if (keyboardStateArray[SDL_SCANCODE_S])
-			{
-				newVelocity.y = keyboardControl.m_downVelocity.y;
-				isMovingInY = true;
-			}
-			if (keyboardStateArray[SDL_SCANCODE_D])
-			{
-				newVelocity.x = keyboardControl.m_rightVelocity.x;
-				isMovingInX = true;
-			}
-			// TODO normalize velocity for diagonal speed
-			// TODO cleanup/simplify the code, this is messy as hell
-			if (!isMovingInX)
-			{
-				const bool isMovingRight = rigidbody.m_velocity.x > 0;
-				const auto velocityDecrementInX = 
-					(isMovingRight) ?
-					static_cast<int>(rigidbody.m_velocity.x - keyboardControl.m_rightVelocity.x * .01f) :
-					static_cast<int>(rigidbody.m_velocity.x + keyboardControl.m_rightVelocity.x * .01f);
+			const auto maxHorizontalVelocity = keyboardControl.m_rightVelocity.x;
+			const auto maxVerticalVelocity = keyboardControl.m_upVelocity.y;
 
-				const int maxVelocity = keyboardControl.m_rightVelocity.x;
-				newVelocity.x = 
-					(isMovingRight) ?
-					glm::clamp(velocityDecrementInX, 0, maxVelocity) :
-					glm::clamp(velocityDecrementInX, -maxVelocity, 0);
-			}
-			if (!isMovingInY)
+			glm::vec2 newVelocity{ rigidbody.m_velocity };
+
+			//calculate the normalized direction of the movement
+			glm::vec2 velocityDirection = { 0, 0 };
 			{
-				const bool isMovingUp = rigidbody.m_velocity.y < 0;
-				const auto velocityDecrementInY = 
-					(isMovingUp) ?
-					static_cast<int>(rigidbody.m_velocity.y - keyboardControl.m_upVelocity.y * .01f) :
-					static_cast<int>(rigidbody.m_velocity.y + keyboardControl.m_upVelocity.y * .01f);
+				if (keyboardStateArray[SDL_SCANCODE_W]) velocityDirection.y -= maxVerticalVelocity;
+				if (keyboardStateArray[SDL_SCANCODE_A]) velocityDirection.x -= maxHorizontalVelocity;
+				if (keyboardStateArray[SDL_SCANCODE_S]) velocityDirection.y += maxVerticalVelocity;
+				if (keyboardStateArray[SDL_SCANCODE_D])	velocityDirection.x += maxHorizontalVelocity;
 
-				const int maxVelocity = keyboardControl.m_upVelocity.y;
-				newVelocity.y = 
-					(isMovingUp) ?
-					glm::clamp(velocityDecrementInY, maxVelocity, 0) :
-					glm::clamp(velocityDecrementInY, 0, -maxVelocity)
-					;
+				isMovingInX = velocityDirection.x != 0;
+				isMovingInY = velocityDirection.y != 0;
 
-				Logger::Error(std::to_string(newVelocity.y));
+				if (isMovingInX || isMovingInY)
+				{
+					velocityDirection = glm::normalize(velocityDirection);
+				}
 			}
+
+			// calculate the magnitude of the movement
+			{
+				glm::vec2 velocityMagnitude{ 0, 0 };
+				const auto currentVelocity{ rigidbody.m_velocity };
+
+				if (isMovingInX)
+				{
+					velocityMagnitude.x = maxHorizontalVelocity;
+				}
+				else
+				{
+					const auto velocityDecrementInX = currentVelocity.x * .02f;
+					velocityMagnitude.x = static_cast<int>(currentVelocity.x - velocityDecrementInX);
+				}
+
+				if (isMovingInY)
+				{
+					velocityMagnitude.y = maxVerticalVelocity;
+				}
+				else
+				{
+					const auto velocityDecrementInY = currentVelocity.y * .02f;
+					velocityMagnitude.y = static_cast<int>(currentVelocity.y - velocityDecrementInY);
+				}
+
+				if (isMovingInX || isMovingInY)
+				{
+					newVelocity = velocityDirection * velocityMagnitude;
+				}
+				else
+				{
+					newVelocity = velocityMagnitude;
+				}
+			}
+
 			rigidbody.m_velocity = newVelocity;
 		}
 	}
