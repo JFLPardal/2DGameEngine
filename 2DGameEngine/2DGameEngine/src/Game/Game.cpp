@@ -161,6 +161,26 @@ void Game::Setup()
     levelLoader.LoadLevel("PlayerPrototype", m_registry, m_assetStore, m_renderer, m_lua);
     SDL_SetWindowSize(m_window, Game::m_mapWidth, Game::m_mapHeight);
     SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+    // set background color
+    {
+        SDL_Color backgroundColor;
+
+        const sol::optional<sol::table> backgroundColorDefined = m_lua["level_setup"]["background_color"];
+        if (backgroundColorDefined != sol::nullopt)
+        {
+            const auto backgroundColorTable = m_lua["level_setup"]["background_color"];
+            backgroundColor = SDL_Color{ backgroundColorTable["r"], backgroundColorTable["g"], backgroundColorTable["b"], backgroundColorTable["a"] };
+        }
+        else
+        {
+            Logger::Error("background color not defined on level definition file. Should be [\"level_setup\"][\"background_color\"]");
+            backgroundColor = SDL_Color{ 200, 200, 200, 255 };
+        }
+
+        SDL_SetRenderDrawColor(m_renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+    }
+    
 }
 
 void Game::Update()
@@ -212,7 +232,6 @@ void Game::Run()
 
 void Game::Render()
 {
-    SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
 
     m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, *m_camera);

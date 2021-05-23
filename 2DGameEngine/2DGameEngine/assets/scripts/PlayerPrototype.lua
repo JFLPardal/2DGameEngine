@@ -1,9 +1,16 @@
+local colors = 
+		{
+			dark_grey = {r = 20, g = 20, b = 20, a = 255},
+			light_grey = { r = 200, g = 200, b = 200, a = 255 },
+			medium_blue = { r = 0,   g = 100, b = 100, a = 255 }
+		}
+
 Level = 
 {
 	assets = 
 	{
 		[0] =
-		{ type="texture", id="player-character", file="./assets/RoomClearer/chopper-spritesheet.png" },
+		{ type="texture", id="player-character", file="./assets/RoomClearer/boxes.png" },
 		{ type="texture", id="bullet-image", file="./assets/RoomClearer/bullet.png"}
 	},
 	entities = 
@@ -16,20 +23,20 @@ Level =
 				transform =
 				{ 
 					position = { x = 30, y = 30 },
-					scale = { x = 3, y = 3 },
+					scale = { x = 1, y = 1 },
 					rotation = 0
 				},
 				sprite = 
 				{
 					texture_asset_id = "player-character",
-					width = 32,
-					height = 32,
+					width = 64,
+					height = 64,
 					z_index = 3
 				},
 				animation = 
 				{
 					num_frames = 2,
-					speed_rate = 20
+					speed_rate = 1
 				},
 				rigidbody = 
 				{
@@ -55,4 +62,9 @@ Level =
 			}
 		}
 	}
+}
+
+level_setup =
+{
+	background_color = colors.medium_blue
 }
