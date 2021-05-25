@@ -28,6 +28,17 @@ void Logger::Error(const std::string& messageToDisplay)
 	m_messages.push_back(logEntry);
 }
 
+void Logger::InitInfo(const std::string& messageToDisplay)
+{
+	LogEntry logEntry;
+	logEntry.m_type = LogType::initInfo;
+	logEntry.m_message = "INIT INFO: [" + CurrentDateTimeToString() + "]: " + messageToDisplay;
+
+	std::cout << "\x1B[02m" << logEntry.m_message << "\033[0m" << std::endl;
+
+	m_messages.push_back(logEntry);
+}
+
 std::string Logger::CurrentDateTimeToString()
 {
 	std::string output(30, '\0');

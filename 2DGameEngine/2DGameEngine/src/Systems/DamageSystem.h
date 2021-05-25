@@ -9,6 +9,7 @@
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/ProjectileComponent.h"
+#include "Components/DummyCharacterComponent.h"
 
 class DamageSystem : public System
 {
@@ -76,7 +77,7 @@ private:
 	{
 		const auto& projectileComponent = projectile.GetComponent<ProjectileComponent>();
 
-		if (!projectileComponent.m_shouldCollideWithPlayer)
+		if (!projectileComponent.m_shouldCollideWithPlayer && enemy.HasComponent<HealthComponent>())
 		{
 			auto& enemyHealth = enemy.GetComponent<HealthComponent>();
 
@@ -87,6 +88,10 @@ private:
 				enemy.Destroy();
 			}
 
+			projectile.Destroy();
+		}
+		else if(enemy.HasComponent<DummuCharacterComponent>())
+		{
 			projectile.Destroy();
 		}
 	}

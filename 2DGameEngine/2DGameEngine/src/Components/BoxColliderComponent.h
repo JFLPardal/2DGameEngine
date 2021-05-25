@@ -3,8 +3,8 @@
 #include <glm/glm.hpp>
 
 /*
-* \param uint width = 32
-* \param uint height = 32
+* \param uint width = 32 - if specified on lua, default value will be scale.x * sprite.x
+* \param uint height = 32 - if specified on lua, default value will be scale.y * sprite.y
 * \param glm::vec2 offset = (0,0)
 */
 struct BoxColliderComponent

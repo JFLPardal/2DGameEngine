@@ -20,6 +20,7 @@
 #include "Components/HealthComponent.h"
 #include "Components/TextLabelComponent.h"
 #include "Components/ScriptComponent.h"
+#include "Components/DummyCharacterComponent.h"
 
 namespace CONST
 {
@@ -228,9 +229,45 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                 sol::optional<sol::table> collider = entity["components"]["box_collider"];
                 if (collider != sol::nullopt)
                 {
+                    Uint8 width = 222, height = 222;
+
+                    // check if width is specified, if not width can be calculated by multiplying the sprite width and the scale of the transform
+                    sol::optional<int> hasSpecifiedWidth = entity["components"]["box_collider"]["width"];
+                    if (hasSpecifiedWidth != sol::nullopt)
+                    {
+                       width = entity["components"]["box_collider"]["width"];
+                    }
+                    else if (newEntity.HasComponent<SpriteComponent>() && newEntity.HasComponent<TransformComponent>())
+                    {
+                        width = newEntity.GetComponent<SpriteComponent>().m_width * newEntity.GetComponent<TransformComponent>().m_scale.x;
+                        Logger::InitInfo("boxCollider created with defaultly calculated width");
+                    }
+                    else
+                    {
+                        width = 1;
+                        Logger::Error("boxCollider could not calculate width because entity does not have both Sprite or Transform components or they are declared after the BoxCollider");
+                    }
+
+                    // check if hieght is specified, if not height can be calculated by multiplying the sprite height and the scale of the transform
+                    sol::optional<int> hasSpecifiedHeight = entity["components"]["box_collider"]["height"];
+                    if (hasSpecifiedHeight != sol::nullopt)
+                    {
+                        height = entity["components"]["box_collider"]["height"];
+                    }
+                    else if (newEntity.HasComponent<SpriteComponent>() && newEntity.HasComponent<TransformComponent>())
+                    {
+                        height = newEntity.GetComponent<SpriteComponent>().m_height * newEntity.GetComponent<TransformComponent>().m_scale.y;
+                        Logger::InitInfo("boxCollider created with defaultly calculated height");
+                    }
+                    else
+                    {
+                        height = 1;
+                        Logger::Error("boxCollider could not calculate width because entity does not have both Sprite or Transform components or they are declared after the BoxCollider");
+                    }
+
                     newEntity.AddComponent<BoxColliderComponent>(
-                        entity["components"]["box_collider"]["width"],
-                        entity["components"]["box_collider"]["height"],
+                        width,
+                        height,
                         glm::vec2(
                             entity["components"]["box_collider"]["offset"]["x"].get_or(0),
                             entity["components"]["box_collider"]["offset"]["y"].get_or(0)
@@ -293,6 +330,14 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                         )
                         );
                 }
+
+                // DummyCharacterComponent
+                sol::optional<sol::table> dummyCharacter = entity["components"]["dummy_character"];
+                if (dummyCharacter != sol::nullopt)
+                {
+                    newEntity.AddComponent<DummuCharacterComponent>();
+                }
+
 
                 // lua script 
                 sol::optional<sol::table> script = entity["components"]["on_update_script"];

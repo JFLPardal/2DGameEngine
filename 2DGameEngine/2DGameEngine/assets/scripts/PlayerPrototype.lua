@@ -49,16 +49,32 @@ Level =
                     down_velocity = { x = 0, y = 150 },
                     left_velocity = { x = -150, y = 0 },
 				},
-				box_collider = 
-				{
-					width = 32,
-					height = 32
-				},
+				box_collider = {} ,
 				projectile_emitter =
 				{
 					projectile_velocity = { x = 100, y = 100 },
 					should_collide_with_player = false
 				}
+			}
+		},
+		{
+			-- dummy
+			group = "enemies",
+			components =
+			{
+				transform = 
+				{
+					position = {x = 400, y = 100 }
+				},
+				sprite =
+				{
+					texture_asset_id = "player-character",
+					width = 64,
+					height = 64,
+					z_index = 3
+				},
+				box_collider = { },
+				dummy_character = { }
 			}
 		}
 	}

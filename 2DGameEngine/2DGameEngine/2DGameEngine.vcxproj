@@ -175,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\imgui\imgui_impl_sdl.h" />
+    <ClInclude Include="src\Components\DummyCharacterComponent.h" />
     <ClInclude Include="src\Components\ScriptComponent.h" />
     <ClInclude Include="src\Events\LeftMouseButtonPressedEvent.h" />
     <ClInclude Include="src\Game\LevelLoader.h" />
