@@ -52,7 +52,8 @@ Level =
 				box_collider = {} ,
 				projectile_emitter =
 				{
-					projectile_velocity = { x = 100, y = 100 },
+					projectile_velocity = { x = 500, y = 500 },
+					repeat_frequency = 0.3,
 					should_collide_with_player = false
 				}
 			}
@@ -74,6 +75,49 @@ Level =
 					z_index = 3
 				},
 				box_collider = { },
+				rigidbody = { },
+				dummy_character = { }
+			}
+		},
+		{
+			-- dummy
+			group = "enemies",
+			components =
+			{
+				transform = 
+				{
+					position = {x = 100, y = 400 }
+				},
+				sprite =
+				{
+					texture_asset_id = "player-character",
+					width = 64,
+					height = 64,
+					z_index = 3
+				},
+				box_collider = { },
+				rigidbody = { },
+				dummy_character = { }
+			}
+		},
+		{
+			-- dummy
+			group = "enemies",
+			components =
+			{
+				transform = 
+				{
+					position = {x = 200, y = 600 }
+				},
+				sprite =
+				{
+					texture_asset_id = "player-character",
+					width = 64,
+					height = 64,
+					z_index = 3
+				},
+				box_collider = { },
+				rigidbody = { },
 				dummy_character = { }
 			}
 		}

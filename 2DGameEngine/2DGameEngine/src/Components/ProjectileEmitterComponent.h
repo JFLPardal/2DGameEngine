@@ -19,7 +19,7 @@ struct ProjectileEmitterComponent
 	bool m_shouldCollideWithPlayer;
 	int m_lastEmissionTimeInMs;
 
-	ProjectileEmitterComponent(glm::vec2 velocity = glm::vec2{ 10,10 }, int frequencyInMs = 1000, int projectileLifetimeInMs = 6000, int damagePercentage = 10, bool shouldCollideWithPlayer = false)
+	ProjectileEmitterComponent(glm::vec2 velocity = glm::vec2{ 10, 10 }, int frequencyInMs = 1000, int projectileLifetimeInMs = 6000, int damagePercentage = 10, bool shouldCollideWithPlayer = false)
 		: m_velocity(velocity)
 		, m_frequencyInMs(frequencyInMs)
 		, m_projectileLifetimeInMs(projectileLifetimeInMs)

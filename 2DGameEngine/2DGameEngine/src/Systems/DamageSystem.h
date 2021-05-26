@@ -7,6 +7,7 @@
 
 #include "Components/BoxColliderComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
+#include "Components/RigidbodyComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/ProjectileComponent.h"
 #include "Components/DummyCharacterComponent.h"
@@ -77,22 +78,35 @@ private:
 	{
 		const auto& projectileComponent = projectile.GetComponent<ProjectileComponent>();
 
-		if (!projectileComponent.m_shouldCollideWithPlayer && enemy.HasComponent<HealthComponent>())
+		if (enemy.HasComponent<RigidbodyComponent>())
 		{
-			auto& enemyHealth = enemy.GetComponent<HealthComponent>();
+			const auto& projectileRigidbody = projectile.GetComponent<RigidbodyComponent>();
+			auto& enemyRigidbody = enemy.GetComponent<RigidbodyComponent>();
 
-			enemyHealth.m_currentHealthPertcentage -= projectileComponent.m_damagePercentage;
-
-			if (enemyHealth.m_currentHealthPertcentage <= 0)
+			const float velocityPenaltyWhenHitInPercentage = .05f;
+			enemyRigidbody.m_velocity += (projectileRigidbody.m_velocity * velocityPenaltyWhenHitInPercentage);
+			Logger::Log("new velocity: " + std::to_string(enemyRigidbody.m_velocity.x) + " " + std::to_string(enemyRigidbody.m_velocity.y));
+			if (!projectileComponent.m_shouldCollideWithPlayer && enemy.HasComponent<HealthComponent>() )
 			{
-				enemy.Destroy();
-			}
+				auto& enemyHealth = enemy.GetComponent<HealthComponent>();
 
-			projectile.Destroy();
+				enemyHealth.m_currentHealthPertcentage -= projectileComponent.m_damagePercentage;
+
+				if (enemyHealth.m_currentHealthPertcentage <= 0)
+				{
+					enemy.Destroy();
+				}
+
+				projectile.Destroy();
+			}
+			else if(enemy.HasComponent<DummuCharacterComponent>())
+			{
+				projectile.Destroy();
+			}
 		}
-		else if(enemy.HasComponent<DummuCharacterComponent>())
+		else
 		{
-			projectile.Destroy();
+			Logger::Log("collision between a projectile and an enemy that doesn't have Rigidbody, intended?");
 		}
 	}
 };

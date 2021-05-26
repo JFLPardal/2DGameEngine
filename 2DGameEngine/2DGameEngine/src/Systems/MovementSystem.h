@@ -83,7 +83,7 @@ public:
 			}
 
 			// 'ensure' an entity is only destroyed when it is no longer visible
-			const int margin = 100;
+			const int margin = 80;
 
 			const bool isOutOfMap = 
 				transform.m_position.x > Game::m_mapWidth + margin ||
