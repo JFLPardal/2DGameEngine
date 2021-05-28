@@ -23,7 +23,7 @@ Level =
 				transform =
 				{ 
 					position = { x = 30, y = 30 },
-					scale = { x = 1, y = 1 },
+					scale = { x = .5, y = .5 },
 					rotation = 0
 				},
 				sprite = 

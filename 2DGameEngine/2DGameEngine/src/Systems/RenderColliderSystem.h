@@ -25,12 +25,19 @@ public:
 			SDL_Rect collisionBox{
 				static_cast<int>(transform.m_position.x + collider.m_offset.x - camera.x), 
 				static_cast<int>(transform.m_position.y + collider.m_offset.y - camera.y), 
-				static_cast<int>(collider.m_width * transform.m_scale.x),
-				static_cast<int>(collider.m_height * transform.m_scale.y)};
+				static_cast<int>(collider.m_width),
+				static_cast<int>(collider.m_height)};
 			
-			if (collider.m_isColliding)
+			if (collider.m_isActive)
 			{
-				SDL_SetRenderDrawColor(renderer, 0, 255, 0, 1);
+				if (collider.m_isColliding)
+				{
+					SDL_SetRenderDrawColor(renderer, 0, 255, 0, 1);
+				}
+				else
+				{
+					SDL_SetRenderDrawColor(renderer, 0, 0, 255, 1);
+				}
 			}
 			else
 			{

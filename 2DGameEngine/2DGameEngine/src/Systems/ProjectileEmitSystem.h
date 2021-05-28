@@ -55,7 +55,7 @@ public:
 				projectile.AddComponent<RigidbodyComponent>(projectileEmitter.m_velocity);
 				projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);
 				projectile.AddComponent<BoxColliderComponent>(4, 4);
-				projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage, projectileEmitter.m_projectileLifetimeInMs);
+				projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage);
 
 				projectileEmitter.m_lastEmissionTimeInMs = SDL_GetTicks();
 			}
@@ -106,7 +106,7 @@ public:
 					projectile.AddComponent<RigidbodyComponent>(projectileVelocity);
 					projectile.AddComponent<SpriteComponent>("bullet-image", 16, 16, 4);
 					projectile.AddComponent<BoxColliderComponent>(4, 4);
-					projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage, projectileEmitter.m_projectileLifetimeInMs);
+					projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage);
 				
 					projectileEmitter.m_lastEmissionTimeInMs = SDL_GetTicks();
 				}

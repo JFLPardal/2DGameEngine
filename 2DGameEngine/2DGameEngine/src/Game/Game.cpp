@@ -36,6 +36,7 @@ Game::Game()
     , m_assetStore(std::make_unique<AssetStore>())
     , m_registry(std::make_unique<Registry>())
     , m_eventBus(std::make_unique<EventBus>())
+    , m_backgroundColor(std::make_unique<SDL_Color>())
 {
     Logger::Log("game created");
 }
@@ -171,14 +172,15 @@ void Game::Setup()
         {
             const auto backgroundColorTable = m_lua["level_setup"]["background_color"];
             backgroundColor = SDL_Color{ backgroundColorTable["r"], backgroundColorTable["g"], backgroundColorTable["b"], backgroundColorTable["a"] };
+
         }
         else
         {
             Logger::Error("background color not defined on level definition file. Should be [\"level_setup\"][\"background_color\"]");
             backgroundColor = SDL_Color{ 200, 200, 200, 255 };
         }
-
-        SDL_SetRenderDrawColor(m_renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+        m_backgroundColor = std::make_unique<SDL_Color>(backgroundColor);
+        SDL_SetRenderDrawColor(m_renderer, m_backgroundColor->r, m_backgroundColor->g, m_backgroundColor->b, m_backgroundColor->a);
     }
     
 }
@@ -214,7 +216,7 @@ void Game::Update()
     m_registry->GetSystem<AnimationSystem>().Update();
     m_registry->GetSystem<CollisionSystem>().Update(m_eventBus);
     m_registry->GetSystem<ProjectileEmitSystem>().Update(m_registry);
-    m_registry->GetSystem<ProjectileLifeCycleSystem>().Update();
+    m_registry->GetSystem<ProjectileLifeCycleSystem>().Update(deltaTime);
     m_registry->GetSystem<CameraMovementSystem>().Update(*m_camera);
     m_registry->GetSystem<ScriptSystem>().Update(deltaTime, SDL_GetTicks());
 }
@@ -232,6 +234,7 @@ void Game::Run()
 
 void Game::Render()
 {
+    SDL_SetRenderDrawColor(m_renderer, m_backgroundColor->r, m_backgroundColor->g, m_backgroundColor->b, m_backgroundColor->a);
     SDL_RenderClear(m_renderer);
 
     m_registry->GetSystem<RenderSystem>().Update(m_renderer, m_assetStore, *m_camera);
@@ -240,7 +243,7 @@ void Game::Render()
     if (m_shouldRenderDebug)
     {
         m_registry->GetSystem<RenderColliderSystem>().Update(m_renderer, *m_camera);
-        m_registry->GetSystem<RenderGUISystem>().Update(m_registry, m_assetStore, *m_camera);
+        //m_registry->GetSystem<RenderGUISystem>().Update(m_registry, m_assetStore, *m_camera);
     }
 
     SDL_RenderPresent(m_renderer);

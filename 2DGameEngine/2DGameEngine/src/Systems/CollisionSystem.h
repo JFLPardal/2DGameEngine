@@ -27,27 +27,33 @@ public:
 			const auto& firstTransform = first.GetComponent<TransformComponent>();
 			auto& firstCollider = first.GetComponent<BoxColliderComponent>();
 
-			for (auto secondEntityIterator = firstEntityIterator; secondEntityIterator != systemEntities.end(); secondEntityIterator++)
+			if (firstCollider.m_isActive)
 			{
-				const Entity second = *secondEntityIterator;
-				const bool isNotSameEntity = first != second;
-				if (isNotSameEntity)
+				for (auto secondEntityIterator = firstEntityIterator; secondEntityIterator != systemEntities.end(); secondEntityIterator++)
 				{
-					const auto& secondTransform = second.GetComponent<TransformComponent>();
-					auto& secondCollider = second.GetComponent<BoxColliderComponent>();
+					const Entity second = *secondEntityIterator;
+					const bool isNotSameEntity = first != second;
+					if (isNotSameEntity)
+					{
+						const auto& secondTransform = second.GetComponent<TransformComponent>();
+						auto& secondCollider = second.GetComponent<BoxColliderComponent>();
 
-					const bool collisionDetected = CheckAABBCollision(firstTransform, firstCollider, secondTransform, secondCollider);
-					if (collisionDetected)
-					{
-						eventBus->EmitEvent<CollisionEvent>(first, second);
-						firstCollider.m_isColliding = true;
-						secondCollider.m_isColliding = true;
-						//Logger::Log("emitted collision");
-					}
-					else
-					{
-						firstCollider.m_isColliding = false;
-						secondCollider.m_isColliding = false;
+						if (secondCollider.m_isActive)
+						{
+							const bool collisionDetected = CheckAABBCollision(firstTransform, firstCollider, secondTransform, secondCollider);
+							if (collisionDetected)
+							{
+								eventBus->EmitEvent<CollisionEvent>(first, second);
+								firstCollider.m_isColliding = true;
+								secondCollider.m_isColliding = true;
+								//Logger::Log("emitted collision");
+							}
+							else
+							{
+								firstCollider.m_isColliding = false;
+								secondCollider.m_isColliding = false;
+							}
+						}
 					}
 				}
 			}

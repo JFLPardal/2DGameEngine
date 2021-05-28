@@ -26,6 +26,7 @@ namespace CONST
 struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_Rect;
+struct SDL_Color;
 
 class Game
 {
@@ -63,4 +64,6 @@ private:
 	int m_millisecondsPreviousFrame = 0;
 
 	bool m_shouldRenderDebug = false;
+
+	std::unique_ptr <SDL_Color> m_backgroundColor;
 };
