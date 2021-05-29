@@ -211,7 +211,7 @@ void Game::Update()
     // update the registry to add or remove entities that were waiting for the end of the frame
     m_registry->Update();
 
-    m_registry->GetSystem<KeyboardControlSystem>().Update();
+    m_registry->GetSystem<KeyboardControlSystem>().Update(deltaTime);
     m_registry->GetSystem<MovementSystem>().Update(deltaTime);
     m_registry->GetSystem<AnimationSystem>().Update();
     m_registry->GetSystem<CollisionSystem>().Update(m_eventBus);

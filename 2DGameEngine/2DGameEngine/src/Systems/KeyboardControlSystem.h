@@ -66,7 +66,7 @@ public:
 		}
 	}
 
-	void Update()
+	void Update(double deltaTime)
 	{
 		for (auto entity : GetSystemEntities())
 		{
@@ -104,14 +104,14 @@ public:
 			{
 				glm::vec2 velocityMagnitude{ 0, 0 };
 				const auto currentVelocity{ rigidbody.m_velocity };
-
+				const float decreaseFactor = 5.f;
 				if (isMovingInX)
 				{
 					velocityMagnitude.x = maxHorizontalVelocity;
 				}
 				else
 				{
-					const auto velocityDecrementInX = currentVelocity.x * .02f;
+					const auto velocityDecrementInX = currentVelocity.x * decreaseFactor * deltaTime;
 					velocityMagnitude.x = static_cast<int>(currentVelocity.x - velocityDecrementInX);
 				}
 
@@ -121,7 +121,7 @@ public:
 				}
 				else
 				{
-					const auto velocityDecrementInY = currentVelocity.y * .02f;
+					const auto velocityDecrementInY = currentVelocity.y * decreaseFactor * deltaTime;
 					velocityMagnitude.y = static_cast<int>(currentVelocity.y - velocityDecrementInY);
 				}
 
