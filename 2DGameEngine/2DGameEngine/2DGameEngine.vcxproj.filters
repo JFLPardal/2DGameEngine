@@ -54,6 +54,12 @@
     <ClCompile Include="src\Game\LevelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\packages\gmock.1.10.0\lib\native\src\gmock\gmock-all.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\packages\gmock.1.10.0\lib\native\src\gtest\gtest-all.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\glm\detail\_features.hpp">
@@ -1634,6 +1640,7 @@
     <None Include="assets\tilemaps\desert.map" />
     <None Include="assets\tilemaps\jungle.map" />
     <None Include="assets\scripts\PlayerPrototype.lua" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\lua\liblua53.a" />

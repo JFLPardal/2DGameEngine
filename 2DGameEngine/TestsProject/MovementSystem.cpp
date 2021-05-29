@@ -1,7 +1,5 @@
 #include "pch.h"
-
-#include <gtest/gtest.h>
-
+/*
 #include "ECS/ECS.h"
 
 #include "Systems/MovementSystem.h"
@@ -73,4 +71,4 @@ namespace MovementSystemTests
 		EXPECT_EQ(entityPos.x, m_entityInitialPosition.x) << "entity's x position is : " << entityPos.x;
 		EXPECT_EQ(entityPos.y, m_entityInitialPosition.y) << "entity's y position is : " << entityPos.y;
 	}
-}
+}*/
