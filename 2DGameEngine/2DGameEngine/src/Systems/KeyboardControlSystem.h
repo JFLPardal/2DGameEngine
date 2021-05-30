@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "ECS/ECS.h"
 #include "EventBus/EventBus.h"
 
@@ -73,8 +75,6 @@ public:
 			const auto& keyboardControl = entity.GetComponent<KeyboardControlledComponent>();
 			auto& rigidbody = entity.GetComponent<RigidbodyComponent>();
 
-			auto keyboardStateArray = SDL_GetKeyboardState(NULL);
-
 			bool isMovingInX = false;
 			bool isMovingInY = false;
 
@@ -86,6 +86,7 @@ public:
 			//calculate the normalized direction of the movement
 			glm::vec2 velocityDirection = { 0, 0 };
 			{
+				auto keyboardStateArray = SDL_GetKeyboardState(NULL);
 				if (keyboardStateArray[SDL_SCANCODE_W]) velocityDirection.y -= maxVerticalVelocity;
 				if (keyboardStateArray[SDL_SCANCODE_A]) velocityDirection.x -= maxHorizontalVelocity;
 				if (keyboardStateArray[SDL_SCANCODE_S]) velocityDirection.y += maxVerticalVelocity;
@@ -97,9 +98,14 @@ public:
 				if (isMovingInX || isMovingInY)
 				{
 					velocityDirection = glm::normalize(velocityDirection);
+					// rigidbody.m_velocity = velocityDirection * maxVelocity;
+					// rigidbody.m_drag = 0; // if we are moving we don't want drag
 				}
-			}
+				//else
+				// rigidbody.ResetDrag();
 
+			}
+			// remove all this
 			// calculate the magnitude of the movement
 			{
 				glm::vec2 velocityMagnitude{ 0, 0 };

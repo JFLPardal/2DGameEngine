@@ -24,7 +24,7 @@ public:
 
 	void SubscribeToEvents(std::unique_ptr<EventBus>& eventBus)
 	{
-		eventBus->SubscribeToEvent<LeftMouseButtonPressedEvent>(this, &ProjectileEmitSystem::OnLeftMouseButtonPressed);
+		eventBus->SubscribeToEvent<LeftMouseButtonPressedEvent>(this, &ProjectileEmitSystem::FireProjectile);
 	}
 
 	void Update(std::unique_ptr<Registry>& registry)
@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	void OnLeftMouseButtonPressed(LeftMouseButtonPressedEvent& eventArgs)
+	void FireProjectile(LeftMouseButtonPressedEvent& eventArgs)
 	{
 		for (auto& entity : GetSystemEntities())
 		{

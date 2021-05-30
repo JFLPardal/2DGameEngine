@@ -19,3 +19,6 @@
 2DGameEngine/2DGameEngine/LastCoverageResults.log
 2DGameEngine/2DGameEngine/.opencppcov/2DGameEngine/Debug_x64.json
 2DGameEngine/TestsProject/pch.pch
+2DGameEngine/Tests/x64/
+2DGameEngine/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4/
+2DGameEngine/Tests/Debug/

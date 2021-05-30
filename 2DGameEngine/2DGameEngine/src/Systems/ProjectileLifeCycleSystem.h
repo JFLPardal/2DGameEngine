@@ -25,9 +25,11 @@ public:
 				
 			const float velocityThresholdToStop = 5.f;
 
+			// this behaviour should be on MovementSystem as well
 			const bool shouldUpdateVelocity = glm::length(rigidbody.m_velocity) > velocityThresholdToStop;
 			if (shouldUpdateVelocity)
 			{
+				// this should be done by the MovementSystem. In this system we are only interested in keeping the 'else' branch
 				const float baseDecrementPerFrame = 700.f;
 
 				const auto velocityDecrementPerFrame = baseDecrementPerFrame / glm::length(rigidbody.m_velocity);
@@ -35,7 +37,7 @@ public:
 			}
 			else
 			{
-				rigidbody.m_velocity = { 0,0 };
+				rigidbody.m_velocity = { 0,0 }; // remove this as well
 				entity.GetComponent<BoxColliderComponent>().m_isActive = false;
 			}
 		}

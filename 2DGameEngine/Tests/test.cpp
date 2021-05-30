@@ -1,18 +1,55 @@
 #include "pch.h"
-/*
+
+#include <glm/glm.hpp>
+#include <memory>
+
 #include "ECS/ECS.h"
+#include "Game/Game.h"
 
 #include "Systems/MovementSystem.h"
 
 #include "Components/TransformComponent.h"
 #include "Components/RigidbodyComponent.h"
 
+#include "Systems/KeyboardControlSystem.h"
+
+
+class MockClass
+{
+public:
+	MOCK_METHOD(void, MethodThatWasMocked, (int));
+
+};
+TEST(MockClassTesting, CanCreateMock)
+{
+	Game game;
+	MockClass mockClass;
+	EXPECT_CALL(mockClass, MethodThatWasMocked);
+
+	mockClass.MethodThatWasMocked(5);
+}
+
+class KeyboardControlSystemFixture : public ::testing::Test
+{
+protected:
+	void SetUp() override
+	{
+		registry.AddSystem<KeyboardControlSystem>();
+	}
+	Registry registry{};
+};
+TEST_F(KeyboardControlSystemFixture, TestingIfUpdateDoesntBreakTestFramework)
+{
+	registry.GetSystem<KeyboardControlSystem>().Update(1.0);
+	ASSERT_EQ(0, 0);
+}
+
 namespace MovementSystemTests
 {
 	class MovementSystemSetup : public ::testing::Test
 	{
-	protected:
-		void SetUp() override
+	public:
+		MovementSystemSetup()
 		{
 			m_registry = std::make_unique<Registry>();
 			m_registry->AddSystem<MovementSystem>();
@@ -48,27 +85,30 @@ namespace MovementSystemTests
 	{
 		double frameDuration = 100;
 		m_registry->GetSystem<MovementSystem>().Update(frameDuration);
-
+		Game g;
+		auto sa = Game::m_windowHeight;
+		//g.Initialize();
 		auto entityExpectedPos = helpers::GetExpectedPos(
-			m_entityInitialPosition, 
-			m_entityVelocity, 
+			m_entityInitialPosition,
+			m_entityVelocity,
 			frameDuration);
 		auto entityPos = m_entity->GetComponent<TransformComponent>().m_position;
 
+		EXPECT_EQ(entityPos.x, sa) << "entity's x position is : " << entityPos.x;
 		EXPECT_EQ(entityPos.x, entityExpectedPos.x) << "entity's x position is : " << entityPos.x;
 		EXPECT_EQ(entityPos.y, entityExpectedPos.y) << "entity's y position is : " << entityPos.y;
 	}
 
-	TEST_F(MovementSystemSetup, PositionDoesNotUpdateWith0SpeedAndNon0Time)
+	TEST_F(MovementSystemSetup, PositionDoesNotUpdateWith0SpeedAndNon0Time22)
 	{
 		m_entity->GetComponent<RigidbodyComponent>().m_velocity = glm::vec2{ 0, 0 };
-
-		double frameDuration = 100;
-		m_registry->GetSystem<MovementSystem>().Update(frameDuration);
+		
+		double frameDuration = 100.9;
+		m_registry->GetSystem<MovementSystem>().Update(frameDuration); //-> problem is the Game::m_mapWidth called in this function it seems
 
 		auto entityPos = m_entity->GetComponent<TransformComponent>().m_position;
 
-		EXPECT_EQ(entityPos.x, m_entityInitialPosition.x) << "entity's x position is : " << entityPos.x;
-		EXPECT_EQ(entityPos.y, m_entityInitialPosition.y) << "entity's y position is : " << entityPos.y;
+		EXPECT_EQ(entityPos.x, m_entityInitialPosition.x);// << "entity's x position is : " << entityPos.x;
+		EXPECT_EQ(entityPos.y, m_entityInitialPosition.y);// << "entity's y position is : " << entityPos.y;
 	}
-}*/
+}

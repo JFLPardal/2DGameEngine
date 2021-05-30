@@ -65,5 +65,5 @@ private:
 
 	bool m_shouldRenderDebug = false;
 
-	std::unique_ptr <SDL_Color> m_backgroundColor;
+	std::unique_ptr<SDL_Color> m_backgroundColor;
 };

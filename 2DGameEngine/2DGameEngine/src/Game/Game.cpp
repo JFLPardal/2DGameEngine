@@ -37,6 +37,7 @@ Game::Game()
     , m_registry(std::make_unique<Registry>())
     , m_eventBus(std::make_unique<EventBus>())
     , m_backgroundColor(std::make_unique<SDL_Color>())
+    , m_lua()
 {
     Logger::Log("game created");
 }

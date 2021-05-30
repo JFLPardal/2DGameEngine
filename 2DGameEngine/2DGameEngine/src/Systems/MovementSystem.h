@@ -65,6 +65,19 @@ public:
 			auto& transform = entity.GetComponent<TransformComponent>();
 			const auto& rigidbody = entity.GetComponent<RigidbodyComponent>();
 
+			// 
+			//const float velocityThresholdToStop = 5.f;
+			//const bool shouldUpdateVelocity = glm::length(rigidbody.m_velocity) > velocityThresholdToStop;
+			// 
+			// if (shouldUpdateVelocity)
+			// {
+				// const float baseDecrementPerFrame = 700.f; -> move to rigidbody
+				// const auto drag = rigidbody.m_baseDecrementPerFrame / glm::length(rigidbody.m_velocity);
+				// 
+				// rigidbody.m_velocity -= (rigidbody.m_velocity * drag * deltaTime);
+				// transform.m_position += velocity; // does it need * deltaTime?
+			//}
+
 			transform.m_position.x += (rigidbody.m_velocity.x * deltaTime);
 			transform.m_position.y += (rigidbody.m_velocity.y * deltaTime);
 
