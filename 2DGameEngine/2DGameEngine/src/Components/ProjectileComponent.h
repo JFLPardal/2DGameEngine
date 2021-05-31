@@ -5,7 +5,6 @@
 /*
 * \param bool shouldCollideWithPlayer = false
 * \param int damagePercentage = 10
-* \param  int projectileLifetimeInMs = 5000
 * */
 struct ProjectileComponent
 {
