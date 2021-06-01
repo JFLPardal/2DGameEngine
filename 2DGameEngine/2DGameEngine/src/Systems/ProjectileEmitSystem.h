@@ -97,8 +97,12 @@ public:
 
 					const glm::vec2 cameraPosition{ eventArgs.m_cameraPositon.x, eventArgs.m_cameraPositon.y };
 					const glm::vec2 mousePositionInScreenCoords{ GetMousePosition() - cameraPosition };
-
-					projectileVelocity = glm::normalize(mousePositionInScreenCoords - projectileSpawnPosition) * projectileEmitter.m_velocity.x;
+					const glm::vec2 projectileDirection = mousePositionInScreenCoords - projectileSpawnPosition;
+					
+					projectileVelocity = (glm::length(projectileDirection) != 0) ?
+						glm::normalize(mousePositionInScreenCoords - projectileSpawnPosition) * projectileEmitter.m_velocity.x :
+						glm::vec2{0,0}
+						;
 
 					auto projectile = entity.m_registry->CreateEntity();
 					projectile.Group("projectiles");
