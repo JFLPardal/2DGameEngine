@@ -294,9 +294,10 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                             entity["components"]["projectile_emitter"]["projectile_velocity"]["y"]
                         ),
                         static_cast<int>(entity["components"]["projectile_emitter"]["repeat_frequency"].get_or(1.0f) * 1000),
-                        static_cast<int>(entity["components"]["projectile_emitter"]["projectile_duration"].get_or(10) * 1000),
                         static_cast<int>(entity["components"]["projectile_emitter"]["hit_percentage_damage"].get_or(10)),
-                        entity["components"]["projectile_emitter"]["should_collide_with_player"].get_or(false)
+                        entity["components"]["projectile_emitter"]["should_collide_with_player"].get_or(false),
+                        entity["components"]["projectile_emitter"]["min_velocity_magnitude"],
+                        entity["components"]["projectile_emitter"]["max_velocity_magnitude"]
                         );
                 }
 

@@ -98,18 +98,19 @@ public:
 					const glm::vec2 cameraPosition{ eventArgs.m_cameraPositon.x, eventArgs.m_cameraPositon.y };
 					const glm::vec2 mousePositionInScreenCoords{ GetMousePosition() - cameraPosition };
 					const glm::vec2 projectileDirection = mousePositionInScreenCoords - projectileSpawnPosition;
-					
+					const float projectileVelocityMagnitude = projectileEmitter.GetMinProjectileVelocity(); // change this value based on how long fire button was held down
+
 					projectileVelocity = (glm::length(projectileDirection) != 0) ?
-						glm::normalize(mousePositionInScreenCoords - projectileSpawnPosition) * projectileEmitter.m_velocity.x :
+						glm::normalize(mousePositionInScreenCoords - projectileSpawnPosition) * projectileVelocityMagnitude:
 						glm::vec2{0,0}
 						;
 
 					auto projectile = entity.m_registry->CreateEntity();
 					projectile.Group("projectiles");
-					projectile.AddComponent<TransformComponent>(projectileSpawnPosition, glm::vec2(.25f, .25f));
+					projectile.AddComponent<TransformComponent>(projectileSpawnPosition, glm::vec2(.15f, .15f));
 					projectile.AddComponent<RigidbodyComponent>(projectileVelocity);
-					projectile.AddComponent<SpriteComponent>("bullet-image", 16, 16, 4);
-					projectile.AddComponent<BoxColliderComponent>(4, 4);
+					projectile.AddComponent<SpriteComponent>("bullet-image", 64, 64, 4);
+					projectile.AddComponent<BoxColliderComponent>();
 					projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage);
 				
 					projectileEmitter.m_lastEmissionTimeInMs = SDL_GetTicks();

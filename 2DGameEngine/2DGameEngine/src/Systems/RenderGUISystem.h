@@ -108,7 +108,7 @@ public:
 				enemy.AddComponent<BoxColliderComponent>(32, 32);
 				float projectileVelX = projectileVelocity * glm::cos(glm::radians(static_cast<float>(projectileAngle)));
 				float projectileVelY = projectileVelocity * glm::sin(glm::radians(static_cast<float>(projectileAngle)));
-				enemy.AddComponent<ProjectileEmitterComponent>(glm::vec2(projectileVelX, projectileVelY), projectileFrequencyInS * 1000, projectileLifetimeInS * 1000, projectileDamagePercentage, true);
+				enemy.AddComponent<ProjectileEmitterComponent>(glm::vec2(projectileVelX, projectileVelY), projectileFrequencyInS * 1000, projectileDamagePercentage, true);
 				enemy.AddComponent<HealthComponent>(initialHealth);
 
 				enemy.AddComponent<TextLabelComponent>(glm::vec2(0, -25),  std::to_string(initialHealth), CONST::FONT::pico_10, SDL_Color{ 200, 200, 200, 255 }, false);

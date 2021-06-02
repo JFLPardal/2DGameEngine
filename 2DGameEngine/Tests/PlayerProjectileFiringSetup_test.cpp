@@ -45,37 +45,63 @@ namespace PlayerProjectileFiring
 
 			m_registry->Update();
 		}
+
+		void PlayerProjectileFiringWithInfiniteFireRateSetup::FireProjectile()
+		{
+			SDL_Rect camera{ 100,0,0,0 };
+			m_eventBus->EmitEvent<LeftMouseButtonPressedEvent>(camera);
+			m_registry->Update();
+		};
+
 		std::unique_ptr<EventBus> m_eventBus;
 		std::unique_ptr<Registry> m_registry;
 		std::unique_ptr<Entity> m_player;
+
+		const Entity& GetLastFiredProjectile() const
+		{
+			const auto& activeProjectiles = m_registry->GetSystem<ProjectileLifeCycleSystem>().GetSystemEntities();
+			return activeProjectiles.at(activeProjectiles.size() - 1);
+		}
 	};
 
 	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, ProjectileLifeCycleSystemHas1EntityWhen1ProjectileWasCreated)
 	{
-		SDL_Rect camera{ 0, 0, 0, 0 };
-		m_eventBus->EmitEvent<LeftMouseButtonPressedEvent>(camera);
-		
-		m_registry->Update();
+		FireProjectile();
 
 		ASSERT_EQ(1, m_registry->GetSystem<ProjectileLifeCycleSystem>().GetSystemEntities().size());
 	}
 	
 	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, ProjectileLifeCycleSystemHasAsManyProjectilesAsTheProjectilesThatWereCreated)
 	{
-		SDL_Rect camera{ 0,0,0,0 };
 		const Uint8 numberOfMouseClicks = 10;
 		for (int i = 0; i < numberOfMouseClicks; i++)
 		{
-			m_eventBus->EmitEvent<LeftMouseButtonPressedEvent>(camera);
+			FireProjectile();
 		}
-
-		m_registry->Update();
 
 		ASSERT_EQ(numberOfMouseClicks, m_registry->GetSystem<ProjectileLifeCycleSystem>().GetSystemEntities().size());
 	}
 
-	//TEST_F(PlayerProjectileFiringSetup, ProjectileVelocityIsMinimumIfButtonToFireWasTapped)
-	//{
-	// 
-	//}
+	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, ProjectileVelocityIsMinimumIfButtonToFireWasTapped)
+	{
+		FireProjectile();
+
+		float minimumProjectileVelocityMagnitude = m_player->GetComponent<ProjectileEmitterComponent>().GetMinProjectileVelocity();
+		float projectileVelocityMagnitude = glm::length(GetLastFiredProjectile().GetComponent<RigidbodyComponent>().m_velocity);
+		
+		ASSERT_FLOAT_EQ(minimumProjectileVelocityMagnitude, projectileVelocityMagnitude);
+	}
+	
+	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, ProjectileVelocityIsMaxIfButtonToFireWasHeldForLongerThanTimeToReachMaxVelocity)
+	{
+		const float timeToReachMaxVelocityInSecs = 2.0f;
+		const float timeFireProjectileWasHeldDownInSecs = 2.1f;
+
+		FireProjectile();
+
+		float maximumProjectileVelocityMagnitude = m_player->GetComponent<ProjectileEmitterComponent>().GetMaxProjectileVelocity();
+		float projectileVelocityMagnitude = glm::length(GetLastFiredProjectile().GetComponent<RigidbodyComponent>().m_velocity);
+
+		ASSERT_FLOAT_EQ(maximumProjectileVelocityMagnitude, projectileVelocityMagnitude);
+	}
 }

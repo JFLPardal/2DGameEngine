@@ -10,8 +10,8 @@ Level =
 	assets = 
 	{
 		[0] =
-		{ type="texture", id="player-character", file="./assets/RoomClearer/boxes.png" },
-		{ type="texture", id="bullet-image", file="./assets/RoomClearer/bullet.png"}
+		{ type="texture", id="player-character", file="./assets/RoomClearer/dummy.png" },
+		{ type="texture", id="bullet-image", file="./assets/RoomClearer/arrow.png"}
 	},
 	entities = 
 	{
@@ -35,7 +35,7 @@ Level =
 				},
 				animation = 
 				{
-					num_frames = 2,
+					num_frames = 1,
 					speed_rate = 1
 				},
 				rigidbody = 
@@ -54,7 +54,9 @@ Level =
 				{
 					projectile_velocity = { x = 500, y = 500 },
 					repeat_frequency = 0.3,
-					should_collide_with_player = false
+					should_collide_with_player = false,
+					min_velocity_magnitude = 800,
+					max_velocity_magnitude = 1600
 				}
 			}
 		},
