@@ -56,7 +56,8 @@ Level =
 					repeat_frequency = 0.3,
 					should_collide_with_player = false,
 					min_velocity_magnitude = 800,
-					max_velocity_magnitude = 1600
+					max_velocity_magnitude = 1600,
+					time_to_reach_max_velocity_in_secs = 1.2,
 				}
 			}
 		},

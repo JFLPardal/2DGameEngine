@@ -25,6 +25,9 @@
 #include "Systems/RenderGUISystem.h"
 #include "Systems/ScriptSystem.h"
 
+#include "Events/LeftMouseButtonDownEvent.h"
+#include "Events/LeftMouseButtonUpEvent.h"
+
 int Game::m_windowWidth = 1680;
 int Game::m_windowHeight = 1050;
 int Game::m_mapWidth = 0;
@@ -127,6 +130,12 @@ void Game::ProcessInput()
                 m_shouldRenderDebug = !m_shouldRenderDebug;
             }
             m_eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
+            break;
+        case SDL_MOUSEBUTTONUP:
+            m_eventBus->EmitEvent<LeftMouseButtonUpEvent>(*m_camera);
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            m_eventBus->EmitEvent<LeftMouseButtonDownEvent>(*m_camera);
             break;
         }
     }

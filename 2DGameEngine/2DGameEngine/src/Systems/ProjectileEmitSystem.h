@@ -12,6 +12,8 @@
 #include "Components/BoxColliderComponent.h"
 
 #include "Events/LeftMouseButtonPressedEvent.h"
+#include "Events/LeftMouseButtonDownEvent.h"
+#include "Events/LeftMouseButtonUpEvent.h"
 
 class ProjectileEmitSystem : public System
 {
@@ -24,7 +26,9 @@ public:
 
 	void SubscribeToEvents(std::unique_ptr<EventBus>& eventBus)
 	{
-		eventBus->SubscribeToEvent<LeftMouseButtonPressedEvent>(this, &ProjectileEmitSystem::FireProjectile);
+		eventBus->SubscribeToEvent<LeftMouseButtonDownEvent>(this, &ProjectileEmitSystem::StartCountingTimeFireProjectileButtonHeldDown);
+		eventBus->SubscribeToEvent<LeftMouseButtonUpEvent>(this, &ProjectileEmitSystem::FireProjectile);
+		//eventBus->SubscribeToEvent<LeftMouseButtonPressedEvent>(this, &ProjectileEmitSystem::FireProjectile);
 	}
 
 	void Update(std::unique_ptr<Registry>& registry)
@@ -61,8 +65,22 @@ public:
 			}
 		}
 	}
+private:
+	void StartCountingTimeFireProjectileButtonHeldDown(LeftMouseButtonDownEvent& eventArgs)
+	{
+		for (auto& entity : GetSystemEntities())
+		{
+			const bool entityIsPlayer = entity.HasTag("player");
 
-	void FireProjectile(LeftMouseButtonPressedEvent& eventArgs)
+			if (entityIsPlayer)
+			{
+				auto& projectileEmitterComponent = entity.GetComponent<ProjectileEmitterComponent>();
+				projectileEmitterComponent.SetTicks(SDL_GetTicks());
+			}
+		}
+	}
+
+	void FireProjectile(LeftMouseButtonUpEvent& eventArgs)
 	{
 		for (auto& entity : GetSystemEntities())
 		{
@@ -75,6 +93,7 @@ public:
 				
 				if (shouldEmitProjectile)
 				{
+
 					auto& projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
 					const auto& transform = entity.GetComponent<TransformComponent>();
 					
@@ -95,11 +114,18 @@ public:
 						return glm::vec2{ x, y };
 					};
 
+					// direction 
 					const glm::vec2 cameraPosition{ eventArgs.m_cameraPositon.x, eventArgs.m_cameraPositon.y };
 					const glm::vec2 mousePositionInScreenCoords{ GetMousePosition() - cameraPosition };
 					const glm::vec2 projectileDirection = mousePositionInScreenCoords - projectileSpawnPosition;
-					const float projectileVelocityMagnitude = projectileEmitter.GetMinProjectileVelocity(); // change this value based on how long fire button was held down
 
+					// velocity magnitude 
+					const bool maxVelocityReached = projectileEmitter.HasMaximumVelocityBeenReached();
+					const float projectileVelocityMagnitude = maxVelocityReached ?
+						projectileEmitter.GetMaxProjectileVelocity() :
+						projectileEmitter.GetMinProjectileVelocity(); 
+
+					// velocity vector
 					projectileVelocity = (glm::length(projectileDirection) != 0) ?
 						glm::normalize(mousePositionInScreenCoords - projectileSpawnPosition) * projectileVelocityMagnitude:
 						glm::vec2{0,0}
