@@ -6,9 +6,6 @@
 #include "Components/RigidbodyComponent.h"
 #include "Components/BoxColliderComponent.h"
 
-
-constexpr float minimumVelocityMagnitudeToKeepUpdating = 2.f;
-
 class ProjectileLifeCycleSystem : public System
 {
 public:

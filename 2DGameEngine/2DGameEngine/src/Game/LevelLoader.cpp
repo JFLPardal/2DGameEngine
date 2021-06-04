@@ -196,7 +196,8 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                 {
                     const sol::table rigidbody = components["rigidbody"];
                     newEntity.AddComponent<RigidbodyComponent>(
-                        glm::vec2(rigidbody["velocity"]["x"].get_or(0), rigidbody["velocity"]["y"].get_or(0))
+                        glm::vec2(rigidbody["velocity"]["x"].get_or(0), rigidbody["velocity"]["y"].get_or(0)),
+                        rigidbody["time_to_stop_in_secs"]
                         );
                 }
 

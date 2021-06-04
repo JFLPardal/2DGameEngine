@@ -82,6 +82,7 @@ private:
 		{
 			const auto& projectileRigidbody = projectile.GetComponent<RigidbodyComponent>();
 			auto& enemyRigidbody = enemy.GetComponent<RigidbodyComponent>();
+			enemyRigidbody.WasPushed();
 
 			const float velocityPenaltyWhenHitInPercentage = .05f;
 			enemyRigidbody.m_velocity += (projectileRigidbody.m_velocity * velocityPenaltyWhenHitInPercentage);

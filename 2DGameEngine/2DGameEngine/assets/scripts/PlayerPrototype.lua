@@ -78,7 +78,10 @@ Level =
 					z_index = 3
 				},
 				box_collider = { },
-				rigidbody = { },
+				rigidbody = 
+				{ 
+					time_to_stop_in_secs = 1
+				},
 				dummy_character = { }
 			}
 		},
@@ -99,7 +102,10 @@ Level =
 					z_index = 3
 				},
 				box_collider = { },
-				rigidbody = { },
+				rigidbody = 
+				{ 
+					time_to_stop_in_secs = 2
+				},
 				dummy_character = { }
 			}
 		},
@@ -120,7 +126,10 @@ Level =
 					z_index = 3
 				},
 				box_collider = { },
-				rigidbody = { },
+				rigidbody = 
+				{ 
+					time_to_stop_in_secs = 4
+				},
 				dummy_character = { }
 			}
 		}

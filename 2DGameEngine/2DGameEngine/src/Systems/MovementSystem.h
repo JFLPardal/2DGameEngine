@@ -7,6 +7,9 @@
 #include "Components/TransformComponent.h"
 #include "Components/RigidbodyComponent.h"
 #include "Components/SpriteComponent.h"
+#include "Components/BoxColliderComponent.h"
+
+constexpr float minimumVelocityMagnitudeToKeepUpdating = 2.f;
 
 class MovementSystem : public System
 {
@@ -63,7 +66,7 @@ public:
 		for (auto entity : GetSystemEntities())
 		{
 			auto& transform = entity.GetComponent<TransformComponent>();
-			const auto& rigidbody = entity.GetComponent<RigidbodyComponent>();
+			auto& rigidbody = entity.GetComponent<RigidbodyComponent>();
 
 			transform.m_position.x += (rigidbody.m_velocity.x * deltaTime);
 			transform.m_position.y += (rigidbody.m_velocity.y * deltaTime);
@@ -81,7 +84,26 @@ public:
 				transform.m_position.y = transform.m_position.y < paddingTop ? paddingTop : transform.m_position.y;
 				transform.m_position.y = transform.m_position.y > Game::m_mapHeight - paddingBottom ? Game::m_mapHeight - paddingBottom : transform.m_position.y;
 			}
+			else if(entity.BelongsToGroup("enemies"))
+			{
+				const bool shouldUpdateVelocity = !rigidbody.ShouldStopMoving();
+				if (shouldUpdateVelocity)
+				{
+					rigidbody.m_velocity -= rigidbody.GetVelocityDecrement() * static_cast<float>(deltaTime);
 
+					{
+						const bool shouldStop = glm::length(rigidbody.m_velocity) < minimumVelocityMagnitudeToKeepUpdating;
+						if (shouldStop)
+						{
+							StopEntity(entity);
+						}
+					}
+				}
+				else
+				{
+					StopEntity(entity);
+				}
+			}
 			// 'ensure' an entity is only destroyed when it is no longer visible
 			const int margin = 80;
 
@@ -95,6 +117,16 @@ public:
 			{
 				entity.Destroy();
 			}
+		}
+	}
+
+private:
+	void StopEntity(Entity& entityToStop)
+	{
+		entityToStop.GetComponent<RigidbodyComponent>().m_velocity = { 0,0 };
+		if (entityToStop.BelongsToGroup("projectiles"))
+		{
+			entityToStop.GetComponent<BoxColliderComponent>().m_isActive = false;
 		}
 	}
 };
