@@ -24,6 +24,7 @@ struct RigidbodyComponent
 	inline float GetTimeToStopInSecs() const { return m_timeToStopInSecs; }
 	inline void SetTimeToStopInSecs(float timeToStopInSecs) { m_timeToStopInSecs = (timeToStopInSecs > 0) ? timeToStopInSecs : 0.1f; CalculateVelocityDecrement(); }
 	
+	inline bool IsStopped() const { return m_velocity.x == 0 && m_velocity.y == 0; }
 	inline bool ShouldStopMoving() const { return SDL_GetTicks() * .001 - m_timeOfLastPushInSecs > m_timeToStopInSecs; }
 	void WasPushed() { m_timeOfLastPushInSecs = SDL_GetTicks() * 0.001; }
 

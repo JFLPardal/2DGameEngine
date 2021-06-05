@@ -134,7 +134,9 @@ private:
 					auto projectile = entity.m_registry->CreateEntity();
 					projectile.Group("projectiles");
 					projectile.AddComponent<TransformComponent>(projectileSpawnPosition, glm::vec2(.15f, .15f));
-					projectile.AddComponent<RigidbodyComponent>(projectileVelocity);
+					const float timeToStopInSecs = .6f;
+					projectile.AddComponent<RigidbodyComponent>(projectileVelocity, timeToStopInSecs);
+					projectile.GetComponent<RigidbodyComponent>().WasPushed();
 					projectile.AddComponent<SpriteComponent>("bullet-image", 64, 64, 4);
 					projectile.AddComponent<BoxColliderComponent>();
 					projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage);

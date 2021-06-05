@@ -100,7 +100,7 @@ namespace PlayerProjectileFiring
 
 	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, WhenFireProjectileButtonWasHeldForLongerThanTimeToReachMaxVelocity_ThenProjectileVelocityIsMax)
 	{
-		const float timeToReachMaxVelocityInSecs = 2.0f;
+		const float timeToReachMaxVelocityInSecs = .1f;
 
 		auto& playerProjectileEmitterComponent = m_player->GetComponent<ProjectileEmitterComponent>();
 		playerProjectileEmitterComponent.SetTimeToReachMaxVelocity(timeToReachMaxVelocityInSecs);
@@ -108,7 +108,7 @@ namespace PlayerProjectileFiring
 		SDL_Rect camera{ 100,0,0,0 };
 		m_eventBus->EmitEvent<LeftMouseButtonDownEvent>(camera);
 		using namespace std::chrono_literals;
-		std::this_thread::sleep_for(2100ms);
+		std::this_thread::sleep_for(120ms);
 		m_eventBus->EmitEvent<LeftMouseButtonUpEvent>(camera);
 		m_registry->Update();
 
