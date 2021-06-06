@@ -1,9 +1,6 @@
+#include "pch.h"
+
 #include "LevelLoader.h"
-
-#include <fstream>
-
-#include <SDL.h>
-#include <sol/sol.hpp>
 
 #include "Game/Game.h"
 #include "ECS/ECS.h"

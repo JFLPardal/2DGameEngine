@@ -3,8 +3,6 @@
 #include <string>
 #include<SDL.h>
 
-#include "ECS/ECS.h"
-
 /*
 * \param const std::string& assetId = ""
 	\param unsigned int width = 32

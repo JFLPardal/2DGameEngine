@@ -1,8 +1,6 @@
-#include "AssetStore.h"
+#include "pch.h"
 
-#include <SDL_image.h>
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include "AssetStore.h"
 
 #include "Logger/Logger.h"
 

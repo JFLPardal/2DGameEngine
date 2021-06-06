@@ -1,11 +1,6 @@
-#include "Game.h"
+#include "pch.h"
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <imgui/imgui.h>
-#include <imgui/imgui_sdl.h>
-#include <imgui/imgui_impl_sdl.h>
+#include "Game.h"
 
 #include "Logger/Logger.h"
 #include "Game/LevelLoader.h"

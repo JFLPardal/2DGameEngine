@@ -1,7 +1,5 @@
 #include "pch.h"
 
-#include <glm/glm.hpp>
-
 #include "ECS/ECS.h"
 #include "Game/Game.h"
 

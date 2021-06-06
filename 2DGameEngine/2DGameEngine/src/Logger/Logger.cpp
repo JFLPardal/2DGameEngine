@@ -1,8 +1,6 @@
-#include "Logger.h"
+#include "pch.h"
 
-#include <iostream>
-#include <chrono>
-#include <ctime>
+#include "Logger.h"
 
 std::vector<LogEntry> Logger::m_messages;
 

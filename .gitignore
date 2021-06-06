@@ -23,3 +23,4 @@
 2DGameEngine/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4/
 2DGameEngine/Tests/Debug/
 2DGameEngine/Tests/.opencppcov/Tests/Debug_x64.json
+2DGameEngine/2DGameEngine/pch.pch

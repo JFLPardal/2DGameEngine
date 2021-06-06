@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "ECS.h"
 
 #include "Logger/Logger.h"
