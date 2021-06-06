@@ -1,24 +1,13 @@
 #include "pch.h"
 
 #include <glm/glm.hpp>
-#include <memory>
-#include <chrono>
-#include <thread>
 
 #include "ECS/ECS.h"
 #include "Game/Game.h"
-#include "EventBus/EventBus.h"
-#include "Events/LeftMouseButtonPressedEvent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/ProjectileLifeCycleSystem.h"
 #include "Systems/ProjectileEmitSystem.h"
-
-#include "Components/TransformComponent.h"
-#include "Components/RigidbodyComponent.h"
-#include "Components/ProjectileComponent.h"
-#include "Components/BoxColliderComponent.h"
-#include "Components/ProjectileEmitterComponent.h"
 
 namespace PlayerProjectileFiring
 {
@@ -48,33 +37,59 @@ namespace PlayerProjectileFiring
 			m_registry->Update();
 		}
 
-		void PlayerProjectileFiringWithInfiniteFireRateSetup::FireProjectile()
-		{
-			SDL_Rect camera{ 100,0,0,0 };
-			m_eventBus->EmitEvent<LeftMouseButtonDownEvent>(camera);
-			m_eventBus->EmitEvent<LeftMouseButtonUpEvent>(camera);
-			m_registry->Update();
-		};
-
 		std::unique_ptr<EventBus> m_eventBus;
 		std::unique_ptr<Registry> m_registry;
 		std::unique_ptr<Entity> m_player;
 
-		const Entity& GetLastFiredProjectile() const
+		////////////////////////// DI?
+		void PlayerProjectileFiringWithInfiniteFireRateSetup::FireProjectile(float timeButtonHeldDownInSecs = 0)
+		{
+			SDL_Rect camera{ 100,0,0,0 };
+			m_eventBus->EmitEvent<LeftMouseButtonDownEvent>(camera);
+			SDL_Delay(timeButtonHeldDownInSecs * 1000);
+			m_eventBus->EmitEvent<LeftMouseButtonUpEvent>(camera);
+			m_registry->Update();
+		};
+
+		float GetLastFiredProjectileVelocityMagnitude() const
 		{
 			const auto& activeProjectiles = m_registry->GetSystem<ProjectileLifeCycleSystem>().GetSystemEntities();
-			return activeProjectiles.at(activeProjectiles.size() - 1);
+			return glm::length(activeProjectiles.at(activeProjectiles.size() - 1).GetComponent<RigidbodyComponent>().m_velocity);
 		}
+
+		int GetNumberOfCreatedProjectiles() const
+		{
+			return m_registry->GetSystem<ProjectileLifeCycleSystem>().GetSystemEntities().size(); 
+		}
+
+		float GetMinimumProjectileVelocityMagnitude() const
+		{
+			return m_player->GetComponent<ProjectileEmitterComponent>().GetMinProjectileVelocity();
+		}
+
+		void SetTimeToReachMaxVelocity(float timeToReachMaxVelocityInSecs)
+		{
+			auto& playerProjectileEmitterComponent = m_player->GetComponent<ProjectileEmitterComponent>();
+			playerProjectileEmitterComponent.SetTimeToReachMaxVelocity(timeToReachMaxVelocityInSecs);
+		}
+
+		float GetMaximumProjectileVelocityMagnitude() const
+		{
+			auto& playerProjectileEmitterComponent = m_player->GetComponent<ProjectileEmitterComponent>();
+			return playerProjectileEmitterComponent.GetMaxProjectileVelocity();
+		}
+
+		//////////////////////// DI ???
 	};
 
-	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, When1ProjectileWasCreated_ThenProjectileLifeCycleSystemHas1Entity)
+	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, GivenNoProjectilesExist_When1ProjectileIsFired_ThenNumberOfInstantiatedProjectilesIs1)
 	{
 		FireProjectile();
 
-		ASSERT_EQ(1, m_registry->GetSystem<ProjectileLifeCycleSystem>().GetSystemEntities().size());
+		ASSERT_EQ(1, GetNumberOfCreatedProjectiles());
 	}
 	
-	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, WhenMultiplesProjectilesWereFired_ThenProjectileLifeCycleSystemHasThoseManyProjectiles)
+	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, WhenMultiplesProjectilesAreFired_ThenTheNumberOfInstantiatedProjectilesIsEqualToThoseManyProjectiles)
 	{
 		const Uint8 numberOfProjectilesToFire = 10;
 		for (int i = 0; i < numberOfProjectilesToFire; i++)
@@ -82,39 +97,25 @@ namespace PlayerProjectileFiring
 			FireProjectile();
 		}
 
-		ASSERT_EQ(numberOfProjectilesToFire, m_registry->GetSystem<ProjectileLifeCycleSystem>().GetSystemEntities().size());
+		ASSERT_EQ(numberOfProjectilesToFire, GetNumberOfCreatedProjectiles());
 	}
 
 	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, WhenFireProjectileButtonTapped_ThenProjectileVelocityIsMinimum)
 	{
-		/*SDL_Rect camera{ 100,0,0,0 };
-		m_eventBus->EmitEvent<LeftMouseButtonDownEvent>(camera);
-		m_eventBus->EmitEvent<LeftMouseButtonUpEvent>(camera);*/
-		FireProjectile();
+		const float timeButtonHeldDownInSecs = .0f;
+		FireProjectile(timeButtonHeldDownInSecs);
 
-		float minimumProjectileVelocityMagnitude = m_player->GetComponent<ProjectileEmitterComponent>().GetMinProjectileVelocity();
-		float projectileVelocityMagnitude = glm::length(GetLastFiredProjectile().GetComponent<RigidbodyComponent>().m_velocity);
-		
-		ASSERT_FLOAT_EQ(minimumProjectileVelocityMagnitude, projectileVelocityMagnitude);
+		ASSERT_FLOAT_EQ(GetLastFiredProjectileVelocityMagnitude(), GetMinimumProjectileVelocityMagnitude());
 	}
 
 	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, WhenFireProjectileButtonWasHeldForLongerThanTimeToReachMaxVelocity_ThenProjectileVelocityIsMax)
 	{
 		const float timeToReachMaxVelocityInSecs = .1f;
+		SetTimeToReachMaxVelocity(timeToReachMaxVelocityInSecs);
 
-		auto& playerProjectileEmitterComponent = m_player->GetComponent<ProjectileEmitterComponent>();
-		playerProjectileEmitterComponent.SetTimeToReachMaxVelocity(timeToReachMaxVelocityInSecs);
+		const float timeButtonHeldDownInSecs = .11f;
+		FireProjectile(timeButtonHeldDownInSecs);
 
-		SDL_Rect camera{ 100,0,0,0 };
-		m_eventBus->EmitEvent<LeftMouseButtonDownEvent>(camera);
-		using namespace std::chrono_literals;
-		std::this_thread::sleep_for(120ms);
-		m_eventBus->EmitEvent<LeftMouseButtonUpEvent>(camera);
-		m_registry->Update();
-
-		float maximumProjectileVelocityMagnitude = playerProjectileEmitterComponent.GetMaxProjectileVelocity();
-		float projectileVelocityMagnitude = glm::length(GetLastFiredProjectile().GetComponent<RigidbodyComponent>().m_velocity);
-
-		ASSERT_FLOAT_EQ(maximumProjectileVelocityMagnitude, projectileVelocityMagnitude);
+		ASSERT_FLOAT_EQ(GetLastFiredProjectileVelocityMagnitude(), GetMaximumProjectileVelocityMagnitude());
 	}
 }

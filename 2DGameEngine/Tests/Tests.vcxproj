@@ -147,7 +147,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir)packages\gmock.1.10.0\lib\native\include;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)packages\gmock.1.10.0\lib\native\include;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -184,7 +184,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(SolutionDir)packages\gmock.1.10.0\lib\native\include;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)packages\gmock.1.10.0\lib\native\include;$(SolutionDir)2DGameEngine\libs\SDL\SDL2-2.0.14\include;$(SolutionDir)2DGameEngine\libs;$(SolutionDir)2DGameEngine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

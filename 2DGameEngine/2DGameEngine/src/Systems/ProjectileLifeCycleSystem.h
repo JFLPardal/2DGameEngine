@@ -22,7 +22,6 @@ public:
 		{
 			if (entity.GetComponent<BoxColliderComponent>().m_isActive)
 			{
-				
 				if (entity.GetComponent<RigidbodyComponent>().IsStopped())
 				{
 					entity.GetComponent<BoxColliderComponent>().m_isActive = false;

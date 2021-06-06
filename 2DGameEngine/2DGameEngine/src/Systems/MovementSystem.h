@@ -68,13 +68,13 @@ public:
 			auto& transform = entity.GetComponent<TransformComponent>();
 			auto& rigidbody = entity.GetComponent<RigidbodyComponent>();
 
-			if (entity.BelongsToGroup("enemies") || entity.BelongsToGroup("projectiles"))
+			if (!entity.HasTag("player"))
 			{
 				const bool shouldUpdateVelocity = !rigidbody.ShouldStopMoving();
-				if (shouldUpdateVelocity && deltaTime < rigidbody.GetTimeToStopInSecs())
+				const bool frameLongerThanRemainingTimeToUpdate = deltaTime >= rigidbody.GetTimeToStopInSecs();
+				if (shouldUpdateVelocity && !frameLongerThanRemainingTimeToUpdate)
 				{
 					rigidbody.m_velocity -= rigidbody.GetVelocityDecrement() * static_cast<float>(deltaTime);
-
 					{
 						const bool shouldStop = glm::length(rigidbody.m_velocity) < minimumVelocityMagnitudeToKeepUpdating;
 						if (shouldStop)

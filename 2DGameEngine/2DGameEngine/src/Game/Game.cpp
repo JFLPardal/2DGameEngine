@@ -139,11 +139,6 @@ void Game::ProcessInput()
             break;
         }
     }
-    const bool isLeftMousePressed = SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT);
-    if (isLeftMousePressed)
-    {
-        m_eventBus->EmitEvent<LeftMouseButtonPressedEvent>(*m_camera);
-    }
 }
 
 void Game::Setup()
@@ -207,7 +202,7 @@ void Game::Update()
         }
     }
 
-    double deltaTime = (SDL_GetTicks() - m_millisecondsPreviousFrame) / 1000.0;
+    double deltaTime = (SDL_GetTicks() - m_millisecondsPreviousFrame) * 0.001f;
     m_millisecondsPreviousFrame = SDL_GetTicks();
     
     // subscription to events will only be alive during one frame

@@ -11,7 +11,6 @@
 #include "Components/SpriteComponent.h"
 #include "Components/BoxColliderComponent.h"
 
-#include "Events/LeftMouseButtonPressedEvent.h"
 #include "Events/LeftMouseButtonDownEvent.h"
 #include "Events/LeftMouseButtonUpEvent.h"
 
@@ -28,7 +27,6 @@ public:
 	{
 		eventBus->SubscribeToEvent<LeftMouseButtonDownEvent>(this, &ProjectileEmitSystem::StartCountingTimeFireProjectileButtonHeldDown);
 		eventBus->SubscribeToEvent<LeftMouseButtonUpEvent>(this, &ProjectileEmitSystem::FireProjectile);
-		//eventBus->SubscribeToEvent<LeftMouseButtonPressedEvent>(this, &ProjectileEmitSystem::FireProjectile);
 	}
 
 	void Update(std::unique_ptr<Registry>& registry)
