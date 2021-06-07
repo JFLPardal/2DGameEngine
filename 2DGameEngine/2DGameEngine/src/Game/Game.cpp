@@ -60,7 +60,7 @@ void Game::Initialize()
     // setting the w and h here before using SDL_SetWindowFullscreen()
     // will set the resolution of the window
     m_window = SDL_CreateWindow(
-        "2D Game Engine", 
+        "2D Game Engine - Tiny Steps Game Dev",
         SDL_WINDOWPOS_CENTERED, 
         SDL_WINDOWPOS_CENTERED,
         m_windowWidth,

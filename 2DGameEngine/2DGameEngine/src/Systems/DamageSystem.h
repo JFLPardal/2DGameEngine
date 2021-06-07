@@ -82,11 +82,11 @@ private:
 		{
 			const auto& projectileRigidbody = projectile.GetComponent<RigidbodyComponent>();
 			auto& enemyRigidbody = enemy.GetComponent<RigidbodyComponent>();
+
+			const float velocityPenaltyWhenHitInPercentage = .3f;
+			enemyRigidbody.m_velocity += (projectileRigidbody.m_velocity * velocityPenaltyWhenHitInPercentage);
 			enemyRigidbody.WasPushed();
 
-			const float velocityPenaltyWhenHitInPercentage = .05f;
-			enemyRigidbody.m_velocity += (projectileRigidbody.m_velocity * velocityPenaltyWhenHitInPercentage);
-			Logger::Log("new velocity: " + std::to_string(enemyRigidbody.m_velocity.x) + " " + std::to_string(enemyRigidbody.m_velocity.y));
 			if (!projectileComponent.m_shouldCollideWithPlayer && enemy.HasComponent<HealthComponent>() )
 			{
 				auto& enemyHealth = enemy.GetComponent<HealthComponent>();

@@ -22,7 +22,7 @@ Level =
 			{
 				transform =
 				{ 
-					position = { x = 30, y = 30 },
+					position = { x = 300, y = 340 },
 					scale = { x = .5, y = .5 },
 					rotation = 0
 				},
@@ -57,10 +57,10 @@ Level =
 					should_collide_with_player = false,
 					min_velocity_magnitude = 800,
 					max_velocity_magnitude = 1600,
-					time_to_reach_max_velocity_in_secs = 1.2,
+					time_to_reach_max_velocity_in_secs = .7,
 				}
 			}
-		},
+		}--[[,
 		{
 			-- dummy
 			group = "enemies",
@@ -68,7 +68,7 @@ Level =
 			{
 				transform = 
 				{
-					position = {x = 400, y = 100 }
+					position = {x = 500, y = 100 }
 				},
 				sprite =
 				{
@@ -92,7 +92,7 @@ Level =
 			{
 				transform = 
 				{
-					position = {x = 100, y = 400 }
+					position = {x = 300, y = 370 }
 				},
 				sprite =
 				{
@@ -116,7 +116,7 @@ Level =
 			{
 				transform = 
 				{
-					position = {x = 200, y = 600 }
+					position = {x = 600, y = 440 }
 				},
 				sprite =
 				{
@@ -132,7 +132,7 @@ Level =
 				},
 				dummy_character = { }
 			}
-		}
+		}]]--
 	}
 }
 

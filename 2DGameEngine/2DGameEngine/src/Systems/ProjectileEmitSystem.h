@@ -55,8 +55,8 @@ public:
 
 				projectile.AddComponent<TransformComponent>(projectileSpawnPosition);
 				projectile.AddComponent<RigidbodyComponent>(projectileEmitter.m_velocity);
-				projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);
-				projectile.AddComponent<BoxColliderComponent>(4, 4);
+				projectile.AddComponent<SpriteComponent>("bullet-image", 64, 64, 4);
+				projectile.AddComponent<BoxColliderComponent>();
 				projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage);
 
 				projectileEmitter.m_lastEmissionTimeInMs = SDL_GetTicks();

@@ -26,11 +26,11 @@ struct RigidbodyComponent
 	
 	inline bool IsStopped() const { return m_velocity.x == 0 && m_velocity.y == 0; }
 	inline bool ShouldStopMoving() const { return SDL_GetTicks() * .001 - m_timeOfLastPushInSecs > m_timeToStopInSecs; }
-	void WasPushed() { m_timeOfLastPushInSecs = SDL_GetTicks() * 0.001; }
+	void WasPushed() { m_timeOfLastPushInSecs = SDL_GetTicks() * 0.001; CalculateVelocityDecrement(); }
 
 	const glm::vec2& GetVelocityDecrement() const { return m_velocityDecrement; }
 private:
-	inline void CalculateVelocityDecrement() { m_velocityDecrement = (m_initialVelocity / m_timeToStopInSecs); }
+	inline void CalculateVelocityDecrement() { m_velocityDecrement = (m_velocity / m_timeToStopInSecs); }
 
 	double m_timeOfLastPushInSecs;
 	float m_timeToStopInSecs;

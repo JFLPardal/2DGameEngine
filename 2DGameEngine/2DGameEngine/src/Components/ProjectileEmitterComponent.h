@@ -60,7 +60,6 @@ struct ProjectileEmitterComponent
 	inline float GetTimeToReachMaxVelocityInSecs() const { return m_timeToReachMaxVelocityInSecs; }
 	bool HasMaximumVelocityBeenReached() const 
 	{ 
-		Logger::InitInfo(std::to_string(SDL_GetTicks() * 0.001f - m_timeWhenPressedInSecs)); 
 		return  SDL_GetTicks() * 0.001f - m_timeWhenPressedInSecs > m_timeToReachMaxVelocityInSecs; 
 	}
 
@@ -89,7 +88,6 @@ struct ProjectileEmitterComponent
 	void SetTicks(double ticksWhenPressedDown) 
 	{ 
 		m_timeWhenPressedInSecs = ticksWhenPressedDown * 0.001f; 
-		Logger::Log("timePressed: " + std::to_string(m_timeWhenPressedInSecs));
 	}
 
 private:
