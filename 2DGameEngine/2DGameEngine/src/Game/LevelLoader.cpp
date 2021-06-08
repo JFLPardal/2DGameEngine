@@ -100,10 +100,10 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
         {
             const sol::table tilemap = level["tilemap"];
             // load tilemap
-            const Uint8 tileSize = tilemap["tile_size"];
+            const Uint16 tileSize = tilemap["tile_size"];
             double tileScale = tilemap["scale"];
-            const Uint8 mapNumCols = tilemap["num_cols"].get_or(0);
-            const Uint8 mapNumRows = tilemap["num_rows"].get_or(0);
+            const Uint16 mapNumCols = tilemap["num_cols"].get_or(0);
+            const Uint16 mapNumRows = tilemap["num_rows"].get_or(0);
 
             const std::string mapPath = tilemap["map_file"];
             std::fstream mapFile;
@@ -145,7 +145,7 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
     // read entities
     {
         const sol::table entities = level["entities"];
-        Uint8 i = 0;
+        Uint16 i = 0;
         while (true)
         {
             // entity
@@ -227,7 +227,7 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                 sol::optional<sol::table> collider = entity["components"]["box_collider"];
                 if (collider != sol::nullopt)
                 {
-                    Uint8 width = 222, height = 222;
+                    Uint16 width = 222, height = 222;
 
                     // check if width is specified, if not width can be calculated by multiplying the sprite width and the scale of the transform
                     sol::optional<int> hasSpecifiedWidth = entity["components"]["box_collider"]["width"];

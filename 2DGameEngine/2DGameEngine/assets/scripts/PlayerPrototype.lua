@@ -1,6 +1,6 @@
 local colors = 
 		{
-			dark_grey = {r = 20, g = 20, b = 20, a = 255},
+			dark_grey = {r = 60, g = 60, b = 60, a = 255},
 			light_grey = { r = 200, g = 200, b = 200, a = 255 },
 			medium_blue = { r = 0,   g = 100, b = 100, a = 255 }
 		}
@@ -60,7 +60,7 @@ Level =
 					time_to_reach_max_velocity_in_secs = .7,
 				}
 			}
-		}--[[,
+		},
 		{
 			-- dummy
 			group = "enemies",
@@ -132,7 +132,43 @@ Level =
 				},
 				dummy_character = { }
 			}
-		}]]--
+		},
+		{
+			-- east wall
+			group="obstacles",
+			components = 
+			{
+				transform = { position = {x = 1010, y = 0} },
+				box_collider = { width = 10, height = 900}
+			}
+		},
+		{
+			-- south wall
+			group="obstacles",
+			components = 
+			{
+				transform = { position = {x = 0, y = 750} },
+				box_collider = { width = 1100, height = 10}
+			}
+		},
+		{
+			-- west wall
+			group="obstacles",
+			components = 
+			{
+				transform = { position = {x = 0, y = 0} },
+				box_collider = { width = 10, height = 900}
+			}
+		},
+		{
+			-- north wall
+			group="obstacles",
+			components = 
+			{
+				transform = { position = {x = 0, y = 0} },
+				box_collider = { width = 1100, height = 10}
+			}
+		}
 	}
 }
 

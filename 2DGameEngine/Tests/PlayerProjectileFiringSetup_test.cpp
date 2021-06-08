@@ -89,7 +89,7 @@ namespace PlayerProjectileFiring
 	
 	TEST_F(PlayerProjectileFiringWithInfiniteFireRateSetup, WhenMultiplesProjectilesAreFired_ThenTheNumberOfInstantiatedProjectilesIsEqualToThoseManyProjectiles)
 	{
-		const Uint8 numberOfProjectilesToFire = 10;
+		const Uint16 numberOfProjectilesToFire = 10;
 		for (int i = 0; i < numberOfProjectilesToFire; i++)
 		{
 			FireProjectile();

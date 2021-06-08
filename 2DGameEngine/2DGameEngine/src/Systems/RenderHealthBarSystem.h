@@ -38,8 +38,8 @@ public:
 			SDL_SetRenderDrawColor(renderer, healthBarColor.r, healthBarColor.g, healthBarColor.b, healthBarColor.a);
 			
 
-			const Uint8 healthBarWidth = 30;
-			const Uint8 healthBarHeight = 3;
+			const Uint16 healthBarWidth = 30;
+			const Uint16 healthBarHeight = 3;
 			const auto healthBarYOffset = 10;
 
 			const double healthBarPosX = transform.m_position.x - camera.x + (sprite.m_width * transform.m_scale.x) -  healthBarWidth;
@@ -70,7 +70,7 @@ public:
 			int labelHeight = 0;
 			SDL_QueryTexture(texture, NULL, NULL, &labelWidth, &labelHeight);
 
-			const Uint8 healthTextYOffset = 15;
+			const Uint16 healthTextYOffset = 15;
 
 			SDL_Rect dstRect;
 				dstRect = {
