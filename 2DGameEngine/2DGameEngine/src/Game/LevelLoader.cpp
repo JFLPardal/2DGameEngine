@@ -92,7 +92,47 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
         }
     }
 
-    // read map
+    // window setup
+    {
+        const int defaultWindowWidth = 1024;
+        const int defaultWindowHeight = 768;
+
+        sol::optional windowSetup = lua["window_setup"];
+        if (windowSetup != sol::nullopt)
+        {
+            sol::optional windowWidth = lua["window_setup"]["width"];
+            sol::optional windowHeight = lua["window_setup"]["height"];
+            
+            if (windowWidth != sol::nullopt)
+            {
+                Game::m_windowWidth = lua["window_setup"]["width"];
+            }
+            else 
+            { 
+                Game::m_windowWidth = defaultWindowWidth;
+                Logger::InitInfo("[WINDOW] No window width specified, using default value of " + std::to_string(defaultWindowWidth));
+            }
+            
+            if (windowHeight != sol::nullopt)
+            {
+                Game::m_windowHeight = lua["window_setup"]["height"];
+            }
+            else
+            {
+                Game::m_windowHeight = defaultWindowHeight;
+                Logger::InitInfo("[WINDOW] No window height specified, using default value of " + std::to_string(defaultWindowHeight));
+            }
+        }
+        else
+        {
+            Game::m_windowWidth = defaultWindowWidth;
+            Game::m_windowHeight = defaultWindowHeight;
+
+            Logger::InitInfo("[WINDOW] No window dimensions specified, creating window with default values [" + std::to_string(defaultWindowWidth) + ", " + std::to_string(defaultWindowHeight) + "] ");
+        }
+    }
+
+    // read map 
     {
         sol::optional<sol::table> tilemap = level["tilemap"];
         const bool isMapDefined = tilemap != sol::nullopt;
@@ -238,12 +278,12 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                     else if (newEntity.HasComponent<SpriteComponent>() && newEntity.HasComponent<TransformComponent>())
                     {
                         width = newEntity.GetComponent<SpriteComponent>().m_width * newEntity.GetComponent<TransformComponent>().m_scale.x;
-                        Logger::InitInfo("boxCollider created with defaultly calculated width");
+                        Logger::InitInfo("[BOX COLLIDER] boxCollider created with defaultly calculated width");
                     }
                     else
                     {
                         width = 1;
-                        Logger::Error("boxCollider could not calculate width because entity does not have both Sprite or Transform components or they are declared after the BoxCollider");
+                        Logger::Error("[BOX COLLIDER] boxCollider could not calculate width because entity does not have both Sprite or Transform components or they are declared after the BoxCollider");
                     }
 
                     // check if hieght is specified, if not height can be calculated by multiplying the sprite height and the scale of the transform
@@ -255,12 +295,12 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                     else if (newEntity.HasComponent<SpriteComponent>() && newEntity.HasComponent<TransformComponent>())
                     {
                         height = newEntity.GetComponent<SpriteComponent>().m_height * newEntity.GetComponent<TransformComponent>().m_scale.y;
-                        Logger::InitInfo("boxCollider created with defaultly calculated height");
+                        Logger::InitInfo("[BOX COLLIDER] boxCollider created with defaultly calculated height");
                     }
                     else
                     {
                         height = 1;
-                        Logger::Error("boxCollider could not calculate width because entity does not have both Sprite or Transform components or they are declared after the BoxCollider");
+                        Logger::Error("[BOX COLLIDER] boxCollider could not calculate width because entity does not have both Sprite or Transform components or they are declared after the BoxCollider");
                     }
 
                     newEntity.AddComponent<BoxColliderComponent>(
