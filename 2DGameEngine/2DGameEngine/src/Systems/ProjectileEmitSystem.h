@@ -131,12 +131,23 @@ private:
 
 					auto projectile = entity.m_registry->CreateEntity();
 					projectile.Group("projectiles");
-					projectile.AddComponent<TransformComponent>(projectileSpawnPosition, glm::vec2(.15f, .15f));
+					
+					const float scaleFactorX = 0.15f;
+					const float scaleFactorY = 0.15f;
+					projectile.AddComponent<TransformComponent>(projectileSpawnPosition, glm::vec2(scaleFactorX, scaleFactorY));
+					
 					const float timeToStopInSecs = .6f;
 					projectile.AddComponent<RigidbodyComponent>(projectileVelocity, timeToStopInSecs);
 					projectile.GetComponent<RigidbodyComponent>().WasPushed();
-					projectile.AddComponent<SpriteComponent>("bullet-image", 64, 64, 4);
-					projectile.AddComponent<BoxColliderComponent>();
+					
+					const int spriteWidth = 64;
+					const int spriteHeight = 64;
+					projectile.AddComponent<SpriteComponent>("bullet-image", spriteWidth, spriteHeight, 4);
+					
+					const auto colliderWidth = spriteWidth * scaleFactorX;
+					const auto colliderHeight = spriteHeight * scaleFactorY;
+					projectile.AddComponent<BoxColliderComponent>(colliderWidth, colliderHeight);
+					
 					projectile.AddComponent<ProjectileComponent>(projectileEmitter.m_shouldCollideWithPlayer, projectileEmitter.m_damagePercentage);
 				
 					projectileEmitter.m_lastEmissionTimeInMs = SDL_GetTicks();
