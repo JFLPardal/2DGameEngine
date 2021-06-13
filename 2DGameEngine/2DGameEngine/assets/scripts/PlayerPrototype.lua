@@ -64,7 +64,7 @@ Level = {
 			{
 				transform = 
 				{
-					position = {x = 500, y = 100 }
+					--position = {x = 500, y = 100 }
 				},
 				sprite =
 				{
@@ -88,7 +88,7 @@ Level = {
 			{
 				transform = 
 				{
-					position = {x = 300, y = 370 }
+					--position = {x = 300, y = 370 }
 				},
 				sprite =
 				{
@@ -112,7 +112,7 @@ Level = {
 			{
 				transform = 
 				{
-					position = {x = 600, y = 440 }
+					--position = {x = 600, y = 440 }
 				},
 				sprite =
 				{

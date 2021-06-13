@@ -19,6 +19,8 @@
 #include "Components/ScriptComponent.h"
 #include "Components/DummyCharacterComponent.h"
 
+#include "HelperFunctions.h"
+
 namespace CONST
 {
     namespace COLORS
@@ -217,11 +219,18 @@ void LevelLoader::ParseLevel(const std::string& levelToLoad, const std::unique_p
                 const sol::optional<sol::table> hasTransform = components["transform"];
                 if (hasTransform != sol::nullopt)
                 {
+                    glm::vec2 spawnPosition{ 282, 282 };
 
                     const sol::table transform = components["transform"];
-                    //get_or assigns the values passed as argument if a value was not specified
+                    const sol::optional<sol::table> hasPosition = transform["position"];
+                    const bool positionSpecified = hasPosition != sol::nullopt;
+                   
+                    spawnPosition = (positionSpecified)?
+                       glm::vec2(transform["position"]["x"] , transform["position"]["y"]) :
+                       Helpers::CalculateRandomPosition();
+
                     newEntity.AddComponent<TransformComponent>(
-                        glm::vec2(transform["position"]["x"], transform["position"]["y"]),
+                        spawnPosition,
                         glm::vec2(transform["scale"]["x"].get_or(1.0), transform["scale"]["y"].get_or(1.0)),
                         transform["rotation"].get_or(0)
                         );
